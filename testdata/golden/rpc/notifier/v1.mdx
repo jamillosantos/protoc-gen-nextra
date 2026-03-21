@@ -1,4 +1,3 @@
-import { Tabs } from 'nextra/components'
 
 # v1
 
@@ -11,31 +10,61 @@ NotificationService manages sending and receiving notifications.
 
 <div style={{borderLeft: '3px solid #0070f3', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
 
-### <span style={{backgroundColor: '#0070f3', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>UNARY</span> Send
+### Send <span style={{backgroundColor: '#0070f3', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>UNARY</span>
 
 Send delivers a notification to a recipient.
 
-<Tabs items={['Request: SendRequest', 'Response: SendResponse']}>
-  <Tabs.Tab>
+#### Request: SendRequest
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `recipient` | `Recipient` |  | recipient is who the notification should be delivered to. |
-| `subject` | `string` |  | subject is the short title of the notification. |
-| `body` | `string` |  | body is the full notification content. |
-| `scheduled_at` | `Timestamp` | <span style={{fontSize:'0.7rem',background:'#9ca3af',color:'white',padding:'1px 6px',borderRadius:'3px'}}>optional</span> | scheduled_at optionally schedules delivery for a future time. |
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>recipient</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#recipient" className="x-type-link"><code>shared.notifications.v1.Recipient</code></a><br/><br/>recipient is who the notification should be delivered to.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>subject</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>subject is the short title of the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>body</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>body is the full notification content.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>scheduled_at</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>scheduled_at optionally schedules delivery for a future time.</td>
+</tr>
+</tbody>
+</table>
 
-</Tabs.Tab>
-  <Tabs.Tab>
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `notification_id` | `string` |  | notification_id is the unique identifier assigned to the notification. |
-| `status` | `DeliveryStatus` |  | status is the initial delivery status. |
-| `queued_at` | `Timestamp` |  | queued_at is the time the notification was accepted. |
+#### Response: SendResponse
 
-</Tabs.Tab>
-</Tabs>
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>notification_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>notification_id is the unique identifier assigned to the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>status</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#deliverystatus" className="x-type-link"><code>shared.notifications.v1.DeliveryStatus</code></a><br/><br/>status is the initial delivery status.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>queued_at</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>queued_at is the time the notification was accepted.</td>
+</tr>
+</tbody>
+</table>
+
 
 </div>
 
@@ -43,30 +72,57 @@ Send delivers a notification to a recipient.
 
 <div style={{borderLeft: '3px solid #7928ca', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
 
-### <span style={{backgroundColor: '#7928ca', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>SERVER STREAM</span> Subscribe
+### Subscribe <span style={{backgroundColor: '#7928ca', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>SERVER STREAM</span>
 
 Subscribe opens a live stream of incoming notifications for a user.
 
-<Tabs items={['Request: SubscribeRequest', 'Response: Notification']}>
-  <Tabs.Tab>
+#### Request: SubscribeRequest
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `user_id` | `string` |  | user_id identifies the user whose notifications to stream. |
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>user_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>user_id identifies the user whose notifications to stream.</td>
+</tr>
+</tbody>
+</table>
 
-</Tabs.Tab>
-  <Tabs.Tab>
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `notification_id` | `string` |  | notification_id is the unique identifier of the notification. |
-| `subject` | `string` |  | subject is the short title of the notification. |
-| `body` | `string` |  | body is the full notification content. |
-| `status` | `DeliveryStatus` |  | status is the current delivery status. |
-| `sent_at` | `Timestamp` |  | sent_at is when the notification was originally sent. |
+#### Response: Notification
 
-</Tabs.Tab>
-</Tabs>
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>notification_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>notification_id is the unique identifier of the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>subject</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>subject is the short title of the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>body</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>body is the full notification content.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>status</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#deliverystatus" className="x-type-link"><code>shared.notifications.v1.DeliveryStatus</code></a><br/><br/>status is the current delivery status.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>sent_at is when the notification was originally sent.</td>
+</tr>
+</tbody>
+</table>
+
 
 </div>
 
@@ -74,27 +130,45 @@ Subscribe opens a live stream of incoming notifications for a user.
 
 <div style={{borderLeft: '3px solid #f5a623', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
 
-### <span style={{backgroundColor: '#f5a623', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>CLIENT STREAM</span> Acknowledge
+### Acknowledge <span style={{backgroundColor: '#f5a623', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>CLIENT STREAM</span>
 
 Acknowledge bulk-acknowledges a stream of notification IDs.
 
-<Tabs items={['Request: AcknowledgeRequest', 'Response: AcknowledgeResponse']}>
-  <Tabs.Tab>
+#### Request: AcknowledgeRequest
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `notification_id` | `string` |  | notification_id is the ID of the notification to acknowledge. |
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>notification_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>notification_id is the ID of the notification to acknowledge.</td>
+</tr>
+</tbody>
+</table>
 
-</Tabs.Tab>
-  <Tabs.Tab>
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `acknowledged_count` | `int32` |  | acknowledged_count is how many notifications were successfully acknowledged. |
-| `failed_ids` | `string` | <span style={{fontSize:'0.7rem',background:'#6b7280',color:'white',padding:'1px 6px',borderRadius:'3px'}}>repeated</span> | failed_ids contains IDs that could not be acknowledged. |
+#### Response: AcknowledgeResponse
 
-</Tabs.Tab>
-</Tabs>
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>acknowledged_count</code></td>
+<td style={{padding:'8px 12px'}}><code>int32</code><br/><br/>acknowledged_count is how many notifications were successfully acknowledged.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>failed_ids</code></td>
+<td style={{padding:'8px 12px'}}><code>string[]</code><br/><br/>failed_ids contains IDs that could not be acknowledged.</td>
+</tr>
+</tbody>
+</table>
+
 
 </div>
 
@@ -102,32 +176,61 @@ Acknowledge bulk-acknowledges a stream of notification IDs.
 
 <div style={{borderLeft: '3px solid #e00', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
 
-### <span style={{backgroundColor: '#e00', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>BIDI STREAM</span> Chat
+### Chat <span style={{backgroundColor: '#e00', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>BIDI STREAM</span>
 
 Chat opens a bidirectional stream for real-time messaging.
 
-<Tabs items={['Request: ChatMessage', 'Response: ChatMessage']}>
-  <Tabs.Tab>
+#### Request: ChatMessage
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `sender_id` | `string` |  | sender_id is the user ID of the message author. |
-| `text` | `string` |  | text is the content of the message. |
-| `sent_at` | `Timestamp` |  | sent_at is when the message was sent. |
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sender_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>sender_id is the user ID of the message author.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>text</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>text is the content of the message.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>sent_at is when the message was sent.</td>
+</tr>
+</tbody>
+</table>
 
-</Tabs.Tab>
-  <Tabs.Tab>
 
-| Field | Type | | Description |
-|-------|------|:---:|-------------|
-| `sender_id` | `string` |  | sender_id is the user ID of the message author. |
-| `text` | `string` |  | text is the content of the message. |
-| `sent_at` | `Timestamp` |  | sent_at is when the message was sent. |
+#### Response: ChatMessage
 
-</Tabs.Tab>
-</Tabs>
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sender_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>sender_id is the user ID of the message author.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>text</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>text is the content of the message.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
+<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>sent_at is when the message was sent.</td>
+</tr>
+</tbody>
+</table>
+
 
 </div>
+
+
 
 
 
