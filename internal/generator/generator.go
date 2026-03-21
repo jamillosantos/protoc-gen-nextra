@@ -20,40 +20,59 @@ func init() {
 }
 
 // GenerateFile generates Nextra MDX documentation for a single .proto file.
-func GenerateFile(gen *protogen.Plugin, f *protogen.File) error {
+// When cfg.SplitServices is true, each service gets its own page under <proto_dir>/<service>.mdx.
+// Otherwise all services are combined into a single <proto_dir>.mdx page.
+func GenerateFile(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	if len(f.Services) == 0 {
 		return nil
 	}
 
+	if cfg.SplitServices {
+		return generateSplit(gen, f)
+	}
+	return generateCombined(gen, f)
+}
+
+// generateCombined writes one MDX file containing all services in the proto file.
+func generateCombined(gen *protogen.Plugin, f *protogen.File) error {
+	// Output path: <proto_directory>.mdx (e.g. greeter/v1/greeter.proto → greeter/v1.mdx)
+	outPath := filepath.Dir(f.Desc.Path()) + ".mdx"
+	return renderPage(gen, f, outPath, buildPackageData(f, outPath))
+}
+
+// generateSplit writes one MDX file per service inside <proto_directory>/<service>.mdx.
+func generateSplit(gen *protogen.Plugin, f *protogen.File) error {
+	dir := filepath.Dir(f.Desc.Path())
 	for _, svc := range f.Services {
-		if err := generateService(gen, f, svc); err != nil {
+		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".mdx")
+		data := buildSingleServiceData(f, svc, outPath)
+		if err := renderPage(gen, f, outPath, data); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func generateService(gen *protogen.Plugin, f *protogen.File, svc *protogen.Service) error {
-	// Output path: <proto_package_path>/<ServiceName>.mdx
-	protoPath := strings.TrimSuffix(f.Desc.Path(), ".proto")
-	outPath := filepath.Join(protoPath, snakeit(string(svc.Desc.Name()))+".mdx")
-
+func renderPage(gen *protogen.Plugin, f *protogen.File, outPath string, data PackageData) error {
 	g := gen.NewGeneratedFile(outPath, f.GoImportPath)
-
-	data := buildServiceData(f, svc)
-
 	var buf bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&buf, "service.tmpl", data); err != nil {
-		return fmt.Errorf("executing template for service %s: %w", svc.Desc.Name(), err)
+		return fmt.Errorf("executing template for %s: %w", outPath, err)
 	}
-
 	g.P(buf.String())
 	return nil
 }
 
-// ServiceData holds all template data for a service page.
+// PackageData holds all template data for a package page.
+type PackageData struct {
+	Title                string
+	PackageName          string
+	ShowServiceHeadings  bool
+	Services             []ServiceData
+}
+
+// ServiceData holds all template data for a single service.
 type ServiceData struct {
-	PackageName string
 	ServiceName string
 	Description string
 	Methods     []MethodData
@@ -108,15 +127,34 @@ type FieldData struct {
 	Repeated    bool
 }
 
-func buildServiceData(f *protogen.File, svc *protogen.Service) ServiceData {
-	data := ServiceData{
-		PackageName: string(f.Desc.Package()),
+func buildPackageData(f *protogen.File, outPath string) PackageData {
+	data := PackageData{
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
+		PackageName:         string(f.Desc.Package()),
+		ShowServiceHeadings: len(f.Services) > 1,
+	}
+	for _, svc := range f.Services {
+		data.Services = append(data.Services, buildServiceData(svc))
+	}
+	return data
+}
+
+func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string) PackageData {
+	return PackageData{
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
+		PackageName:         string(f.Desc.Package()),
+		ShowServiceHeadings: false,
+		Services:            []ServiceData{buildServiceData(svc)},
+	}
+}
+
+func buildServiceData(svc *protogen.Service) ServiceData {
+	sd := ServiceData{
 		ServiceName: string(svc.Desc.Name()),
 		Description: commentString(svc.Comments),
 	}
-
 	for _, m := range svc.Methods {
-		md := MethodData{
+		sd.Methods = append(sd.Methods, MethodData{
 			Name:           string(m.Desc.Name()),
 			Description:    commentString(m.Comments),
 			RequestType:    string(m.Input.Desc.Name()),
@@ -125,11 +163,9 @@ func buildServiceData(f *protogen.File, svc *protogen.Service) ServiceData {
 			ServerStreaming: m.Desc.IsStreamingServer(),
 			RequestFields:  buildFields(m.Input),
 			ResponseFields: buildFields(m.Output),
-		}
-		data.Methods = append(data.Methods, md)
+		})
 	}
-
-	return data
+	return sd
 }
 
 func buildFields(msg *protogen.Message) []FieldData {
