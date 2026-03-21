@@ -73,6 +73,7 @@ Send delivers a notification to a recipient.
 
 #### Errors
 
+
 ##### `INVALID_ARGUMENT`
 
 one or more fields failed validation.
@@ -86,6 +87,10 @@ Detail type: <TypePreview name="shared.notifications.v1.ValidationFailure" href=
   "reason": "human-readable constraint violation"
 }
 ```
+
+
+
+---
 
 
 ##### `RESOURCE_EXHAUSTED`
@@ -111,6 +116,10 @@ Detail type: `google.rpc.QuotaFailure`
 ```
 
 
+
+---
+
+
 ##### `NOT_FOUND`
 
 the target resource could not be located.
@@ -126,9 +135,17 @@ Detail type: `google.rpc.ResourceInfo`
 ```
 
 
+
+---
+
+
 ##### `NOT_FOUND`
 
 the recipient user does not exist.
+
+
+
+---
 
 
 ##### `FAILED_PRECONDITION`
@@ -154,6 +171,10 @@ Detail type: `google.rpc.PreconditionFailure`
 ```
 
 
+
+---
+
+
 ##### `UNAUTHENTICATED`
 
 the request could not be authenticated.
@@ -167,6 +188,10 @@ Detail type: `google.rpc.ErrorInfo`
   "reason": "INVALID_TOKEN"
 }
 ```
+
+
+
+---
 
 
 ##### `UNAVAILABLE`
@@ -301,9 +326,14 @@ Subscribe opens a live stream of incoming notifications for a user.
 
 #### Errors
 
+
 ##### `NOT_FOUND`
 
 the user does not exist.
+
+
+
+---
 
 
 ##### `UNAUTHENTICATED`
@@ -319,6 +349,10 @@ Detail type: `google.rpc.ErrorInfo`
   "reason": "INVALID_TOKEN"
 }
 ```
+
+
+
+---
 
 
 ##### `UNAVAILABLE`
@@ -391,9 +425,14 @@ Acknowledge bulk-acknowledges a stream of notification IDs.
 
 #### Errors
 
+
 ##### `NOT_FOUND`
 
 one or more notification IDs do not exist.
+
+
+
+---
 
 
 ##### `UNAUTHENTICATED`
@@ -479,9 +518,14 @@ Chat opens a bidirectional stream for real-time messaging.
 
 #### Errors
 
+
 ##### `NOT_FOUND`
 
 the target user for the chat session does not exist.
+
+
+
+---
 
 
 ##### `UNAUTHENTICATED`
@@ -497,6 +541,10 @@ Detail type: `google.rpc.ErrorInfo`
   "reason": "INVALID_TOKEN"
 }
 ```
+
+
+
+---
 
 
 ##### `RESOURCE_EXHAUSTED`

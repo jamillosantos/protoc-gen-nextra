@@ -66,17 +66,21 @@ _No fields._
 [[ end ]]
 [[ if .Errors ]]
 #### Errors
-[[ range .Errors ]]
-##### `[[ .Code ]]`
-[[ if .Description ]]
-[[ .Description ]]
+[[ range $i, $e := .Errors ]]
+[[ if $i ]]
+---
+
+[[ end ]]
+##### `[[ $e.Code ]]`
+[[ if $e.Description ]]
+[[ $e.Description ]]
 [[ end -]]
-[[ if .Fields ]]
-[[ if .DetailType ]]Detail type: [[ if .DetailTypePreview ]]<TypePreview name="[[ .DetailType ]]" href="[[ .DetailTypeLink ]]" fields={[[ .DetailTypePreview.ItemsJSON ]]}/>[[- else if .DetailTypeLink ]]<a href="[[ .DetailTypeLink ]]" className="x-type-link"><code>[[ .DetailType ]]</code></a>[[ else ]]`[[ .DetailType ]]`[[ end ]]
+[[ if $e.Fields ]]
+[[ if $e.DetailType ]]Detail type: [[ if $e.DetailTypePreview ]]<TypePreview name="[[ $e.DetailType ]]" href="[[ $e.DetailTypeLink ]]" fields={[[ $e.DetailTypePreview.ItemsJSON ]]}/>[[- else if $e.DetailTypeLink ]]<a href="[[ $e.DetailTypeLink ]]" className="x-type-link"><code>[[ $e.DetailType ]]</code></a>[[ else ]]`[[ $e.DetailType ]]`[[ end ]]
 
 [[ end ]]
 ```json
-[[ .FieldsJSON ]]
+[[ $e.FieldsJSON ]]
 ```
 [[ end ]]
 [[ end ]]
