@@ -2,12 +2,34 @@ syntax = "proto3";
 
 package greeter.v1;
 
+import "nextra/options.proto";
+
 option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/rpc/greeter/v1";
 
 // GreeterService provides greeting functionality.
 service Greeter {
   // SayHello sends a greeting to the server.
-  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "the requested person was not found."
+        },
+        {
+          code: "INVALID_ARGUMENT",
+          description: "input validation failed.",
+          detail_type: "google.rpc.BadRequest",
+          fields: [
+            { name: "field_violations[].field",       value: "name",     },
+            { name: "field_violations[].description", value: "must not be empty." },
+            { name: "field_violations[].field",       value: "language" },
+            { name: "field_violations[].description", value: "must be a valid BCP-47 language tag." }
+          ]
+        }
+      ]
+    };
+  }
 
   // SayHelloStream streams greetings back to the client.
   rpc SayHelloStream (HelloRequest) returns (stream HelloReply);

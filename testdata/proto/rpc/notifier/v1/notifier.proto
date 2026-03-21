@@ -3,13 +3,80 @@ syntax = "proto3";
 package notifier.v1;
 
 import "shared/notifications/v1/common.proto";
+import "nextra/options.proto";
 
 option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/rpc/notifier/v1";
 
 // NotificationService manages sending and receiving notifications.
 service NotificationService {
   // Send delivers a notification to a recipient.
-  rpc Send (SendRequest) returns (SendResponse);
+  rpc Send (SendRequest) returns (SendResponse) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "INVALID_ARGUMENT",
+          description: "one or more fields failed validation.",
+          detail_type: "google.rpc.BadRequest",
+          fields: [
+            { name: "field_violations[].field",       value: "recipient.email" },
+            { name: "field_violations[].description", value: "must be a valid email address." },
+            { name: "field_violations[].field",       value: "subject" },
+            { name: "field_violations[].description", value: "must not be empty." },
+            { name: "field_violations[].field",       value: "body" },
+            { name: "field_violations[].description", value: "must not exceed 10 000 characters." }
+          ]
+        },
+        {
+          code: "RESOURCE_EXHAUSTED",
+          description: "the caller has exceeded its notification quota.",
+          detail_type: "google.rpc.QuotaFailure",
+          fields: [
+            { name: "violations[].subject",     value: "notifications/day" },
+            { name: "violations[].description", value: "daily send limit reached." },
+            { name: "violations[].subject",     value: "notifications/second" },
+            { name: "violations[].description", value: "rate limit exceeded; back off and retry." }
+          ]
+        },
+        {
+          code: "NOT_FOUND",
+          description: "the target resource could not be located.",
+          detail_type: "google.rpc.ResourceInfo",
+          fields: [
+            { name: "resource_type", value: "Recipient" },
+            { name: "resource_name", value: "recipient.user_id" }
+          ]
+        },
+        {
+          code: "FAILED_PRECONDITION",
+          description: "the account is not in a state that allows sending.",
+          detail_type: "google.rpc.PreconditionFailure",
+          fields: [
+            { name: "violations[].type",        value: "ACCOUNT_SUSPENDED" },
+            { name: "violations[].description", value: "the sending account has been suspended." },
+            { name: "violations[].type",        value: "EMAIL_UNVERIFIED" },
+            { name: "violations[].description", value: "the sender email has not been verified." }
+          ]
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        },
+        {
+          code: "UNAVAILABLE",
+          description: "the service is temporarily unavailable; retry after the indicated delay.",
+          detail_type: "google.rpc.RetryInfo",
+          fields: [
+            { name: "retry_delay", value: "5s" }
+          ]
+        }
+      ]
+    };
+  }
 
   // Subscribe opens a live stream of incoming notifications for a user.
   rpc Subscribe (SubscribeRequest) returns (stream Notification);
