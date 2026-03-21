@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package common.v1;
+package shared.notifications.v1;
 
-option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/common/v1";
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/shared/notifications/v1";
 
 // Timestamp represents a point in time.
 message Timestamp {

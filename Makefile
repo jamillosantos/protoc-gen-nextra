@@ -3,10 +3,10 @@
 BINARY := protoc-gen-nextra
 
 PROTO_FILES := \
-	testdata/proto/greeter/v1/greeter.proto \
-	testdata/proto/greeter/v2/greeter.proto \
-	testdata/proto/common/v1/common.proto \
-	testdata/proto/notifier/v1/notifier.proto
+	testdata/proto/rpc/greeter/v1/greeter.proto \
+	testdata/proto/rpc/greeter/v2/greeter.proto \
+	testdata/proto/rpc/notifier/v1/notifier.proto \
+	testdata/proto/shared/notifications/v1/common.proto
 
 build:
 	go build -o bin/$(BINARY) ./cmd/$(BINARY)
@@ -47,3 +47,4 @@ lint:
 
 clean:
 	rm -rf bin/ testdata/all.pb
+	find testdata/content -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +

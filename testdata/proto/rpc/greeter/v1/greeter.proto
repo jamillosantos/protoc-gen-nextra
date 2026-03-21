@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package greeter.v1;
 
-option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/greeter/v1";
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/rpc/greeter/v1";
 
 // GreeterService provides greeting functionality.
 service Greeter {

@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package notifier.v1;
 
-import "common/v1/common.proto";
+import "shared/notifications/v1/common.proto";
 
-option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/notifier/v1";
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/rpc/notifier/v1";
 
 // NotificationService manages sending and receiving notifications.
 service NotificationService {
@@ -24,7 +24,7 @@ service NotificationService {
 // SendRequest is the request message for Send.
 message SendRequest {
   // recipient is who the notification should be delivered to.
-  common.v1.Recipient recipient = 1;
+  shared.notifications.v1.Recipient recipient = 1;
 
   // subject is the short title of the notification.
   string subject = 2;
@@ -33,7 +33,7 @@ message SendRequest {
   string body = 3;
 
   // scheduled_at optionally schedules delivery for a future time.
-  optional common.v1.Timestamp scheduled_at = 4;
+  optional shared.notifications.v1.Timestamp scheduled_at = 4;
 }
 
 // SendResponse is the response message for Send.
@@ -42,10 +42,10 @@ message SendResponse {
   string notification_id = 1;
 
   // status is the initial delivery status.
-  common.v1.DeliveryStatus status = 2;
+  shared.notifications.v1.DeliveryStatus status = 2;
 
   // queued_at is the time the notification was accepted.
-  common.v1.Timestamp queued_at = 3;
+  shared.notifications.v1.Timestamp queued_at = 3;
 }
 
 // SubscribeRequest is the request message for Subscribe.
@@ -66,10 +66,10 @@ message Notification {
   string body = 3;
 
   // status is the current delivery status.
-  common.v1.DeliveryStatus status = 4;
+  shared.notifications.v1.DeliveryStatus status = 4;
 
   // sent_at is when the notification was originally sent.
-  common.v1.Timestamp sent_at = 5;
+  shared.notifications.v1.Timestamp sent_at = 5;
 }
 
 // AcknowledgeRequest is a single item in the acknowledgement stream.
@@ -96,5 +96,5 @@ message ChatMessage {
   string text = 2;
 
   // sent_at is when the message was sent.
-  common.v1.Timestamp sent_at = 3;
+  shared.notifications.v1.Timestamp sent_at = 3;
 }
