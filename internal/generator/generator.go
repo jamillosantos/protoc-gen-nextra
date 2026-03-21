@@ -9,7 +9,10 @@ import (
 	"text/template"
 
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
+
+	nextraopt "github.com/jamillosantos/protoc-gen-nextra/nextra"
 )
 
 //go:generate go run github.com/jamillosantos/protoc-gen-nextra/internal/embedgen
@@ -71,6 +74,7 @@ type PackageData struct {
 	Title               string
 	PackageName         string
 	ShowServiceHeadings bool
+	HasUsageExamples    bool // true if any unary method has generated examples
 	Services            []ServiceData
 	Messages            []MessageData
 	Enums               []EnumData
@@ -113,6 +117,23 @@ type MethodData struct {
 	ServerStreaming  bool
 	RequestFields   []FieldData
 	ResponseFields  []FieldData
+	Errors          []ErrorData
+	GrpcurlExample  string // non-empty for unary methods only
+	GoExample       string // non-empty for unary methods only
+}
+
+// ErrorData holds template data for a single documented error.
+type ErrorData struct {
+	Code        string
+	Description string
+	DetailType  string
+	Fields      []ErrorDetailFieldData
+}
+
+// ErrorDetailFieldData is a free-form field annotation for an error detail type.
+type ErrorDetailFieldData struct {
+	Name  string
+	Value string
 }
 
 // StreamingType returns a short label for the RPC streaming mode.
@@ -182,7 +203,7 @@ func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData 
 	}
 	inlined := make(map[string]bool)
 	for _, svc := range f.Services {
-		data.Services = append(data.Services, buildServiceData(svc, cfg))
+		data.Services = append(data.Services, buildServiceData(f, svc, cfg))
 		for _, m := range svc.Methods {
 			inlined[string(m.Input.Desc.Name())] = true
 			inlined[string(m.Output.Desc.Name())] = true
@@ -197,6 +218,13 @@ func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData 
 			Description: commentString(msg.Comments),
 			Fields:      buildFields(msg, cfg),
 		})
+	}
+	for _, svc := range data.Services {
+		for _, m := range svc.Methods {
+			if m.GrpcurlExample != "" {
+				data.HasUsageExamples = true
+			}
+		}
 	}
 	for _, enum := range f.Enums {
 		ed := EnumData{
@@ -215,30 +243,74 @@ func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData 
 }
 
 func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string, cfg Config) PackageData {
+	sd := buildServiceData(f, svc, cfg)
+	hasExamples := false
+	for _, m := range sd.Methods {
+		if m.GrpcurlExample != "" {
+			hasExamples = true
+			break
+		}
+	}
 	return PackageData{
 		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: false,
-		Services:            []ServiceData{buildServiceData(svc, cfg)},
+		HasUsageExamples:    hasExamples,
+		Services:            []ServiceData{sd},
 	}
 }
 
-func buildServiceData(svc *protogen.Service, cfg Config) ServiceData {
+func buildServiceData(f *protogen.File, svc *protogen.Service, cfg Config) ServiceData {
 	sd := ServiceData{
 		ServiceName: string(svc.Desc.Name()),
 		Description: commentString(svc.Comments),
 	}
+	// Resolve server address: service option takes priority over plugin-level config.
+	svcServerAddr := cfg.ServerAddr
+	if opts := svc.Desc.Options(); opts != nil && proto.HasExtension(opts, nextraopt.E_ServerAddr) {
+		if v, ok := proto.GetExtension(opts, nextraopt.E_ServerAddr).(string); ok && v != "" {
+			svcServerAddr = v
+		}
+	}
+
+	pkg := string(f.Desc.Package())
 	for _, m := range svc.Methods {
-		sd.Methods = append(sd.Methods, MethodData{
-			Name:           string(m.Desc.Name()),
-			Description:    commentString(m.Comments),
-			RequestType:    string(m.Input.Desc.Name()),
-			ResponseType:   string(m.Output.Desc.Name()),
-			ClientStreaming: m.Desc.IsStreamingClient(),
-			ServerStreaming: m.Desc.IsStreamingServer(),
-			RequestFields:  buildFields(m.Input, cfg),
-			ResponseFields: buildFields(m.Output, cfg),
-		})
+		md := MethodData{
+			Name:            string(m.Desc.Name()),
+			Description:     commentString(m.Comments),
+			RequestType:     string(m.Input.Desc.Name()),
+			ResponseType:    string(m.Output.Desc.Name()),
+			ClientStreaming:  m.Desc.IsStreamingClient(),
+			ServerStreaming:  m.Desc.IsStreamingServer(),
+			RequestFields:   buildFields(m.Input, cfg),
+			ResponseFields:  buildFields(m.Output, cfg),
+		}
+		if mopts := m.Desc.Options(); mopts != nil && proto.HasExtension(mopts, nextraopt.E_MethodErrors) {
+			if me, ok := proto.GetExtension(mopts, nextraopt.E_MethodErrors).(*nextraopt.MethodErrors); ok {
+				for _, e := range me.GetErrors() {
+					ed := ErrorData{
+						Code:        e.GetCode(),
+						Description: e.GetDescription(),
+						DetailType:  e.GetDetailType(),
+					}
+					for _, f := range e.GetFields() {
+						ed.Fields = append(ed.Fields, ErrorDetailFieldData{
+							Name:  f.GetName(),
+							Value: f.GetValue(),
+						})
+					}
+					md.Errors = append(md.Errors, ed)
+				}
+			}
+		}
+
+		if cfg.Examples && !m.Desc.IsStreamingClient() && !m.Desc.IsStreamingServer() {
+			cfgWithAddr := cfg
+			cfgWithAddr.ServerAddr = svcServerAddr
+			md.GrpcurlExample = buildGrpcurlExample(pkg, string(svc.Desc.Name()), string(m.Desc.Name()), m, cfgWithAddr.ServerAddr)
+			md.GoExample = buildGoExample(f, svc, m, cfgWithAddr)
+		}
+		sd.Methods = append(sd.Methods, md)
 	}
 	return sd
 }

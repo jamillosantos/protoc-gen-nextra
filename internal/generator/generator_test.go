@@ -32,7 +32,7 @@ func TestGenerateFile(t *testing.T) {
 		if !f.Generate {
 			continue
 		}
-		if err := generator.GenerateFile(plugin, f, generator.Config{TypePreviews: true}); err != nil {
+		if err := generator.GenerateFile(plugin, f, generator.Config{TypePreviews: true, Examples: true}); err != nil {
 			genErr = err
 			break
 		}
