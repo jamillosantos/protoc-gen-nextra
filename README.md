@@ -7,8 +7,10 @@ A `protoc` plugin that generates [Nextra](https://nextra.site) MDX documentation
 Each `.proto` file with services produces a `.mdx` page with:
 
 - **RPC type badges** — `UNARY`, `SERVER STREAM`, `CLIENT STREAM`, `BIDI STREAM` — color-coded and visually distinct
-- **Tabbed request/response** — fields shown in switchable tabs, not stacked
-- **Field tables** with type, `optional`/`repeated` pills, and inline doc comments
+- **Request/response field tables** with type, `optional`/`repeated` pills, and inline doc comments
+- **Cross-package type links** with hover preview cards showing the referenced type's fields
+- **Error documentation** — per-method error codes with descriptions, detail types, and example JSON payloads
+- **Usage examples** — grpcurl and Go code tabs per unary method (opt-in)
 - Source comments from your `.proto` file carried through as descriptions
 
 ## Requirements
@@ -83,6 +85,10 @@ Options are passed via `--nextra_opt` (protoc) or the `opt` key (buf).
 | Option | Default | Description |
 |---|---|---|
 | `split_services` | `false` | Generate one page per service instead of one page per proto file. Each service is written to `<proto_dir>/<service-name>.mdx`. |
+| `disable_type_previews` | `false` | Disable the hover preview cards for cross-package type references. |
+| `examples` | `false` | Generate grpcurl and Go usage examples for every unary method. |
+| `go_module` | `<YOUR-GO-MODULE>` | Go module path used to build import paths in Go usage examples. |
+| `server_addr` | `localhost:50051` | Default gRPC server address used in usage examples. Can be overridden per service with the `(nextra.server_addr)` proto option. |
 
 ### With Buf
 
@@ -91,22 +97,88 @@ version: v2
 plugins:
   - local: protoc-gen-nextra
     out: docs/content
-    opt: split_services=true
+    opt:
+      - examples=true
+      - go_module=github.com/org/repo/gen
+      - server_addr=api.example.com:443
 ```
 
 ### With protoc
 
 ```sh
 protoc \
-  --nextra_opt=split_services=true \
+  --nextra_opt=examples=true \
+  --nextra_opt=go_module=github.com/org/repo/gen \
+  --nextra_opt=server_addr=api.example.com:443 \
   --nextra_out=./docs/content \
   -I ./proto \
   ./proto/**/*.proto
 ```
 
+## Proto options
+
+Import `nextra/options.proto` to annotate your services and methods.
+
+### `(nextra.server_addr)` — per-service server address
+
+Overrides the `server_addr` plugin option for a specific service:
+
+```proto
+import "nextra/options.proto";
+
+service MyService {
+  option (nextra.server_addr) = "grpc.example.com:443";
+
+  rpc GetFoo (GetFooRequest) returns (GetFooResponse);
+}
+```
+
+### `(nextra.method_errors)` — error documentation
+
+Documents the errors a method may return. Each entry renders as a heading with description, an optional detail type, and a JSON example payload:
+
+```proto
+import "nextra/options.proto";
+
+rpc CreateFoo (CreateFooRequest) returns (CreateFooResponse) {
+  option (nextra.method_errors) = {
+    errors: [
+      {
+        code: "NOT_FOUND",
+        description: "the requested resource does not exist."
+      },
+      {
+        code: "INVALID_ARGUMENT",
+        description: "one or more fields failed validation.",
+        detail_type: "google.rpc.BadRequest",
+        fields: [
+          { name: "field_violations[0].field",       value: "email" },
+          { name: "field_violations[0].description", value: "must be a valid email address." }
+        ]
+      }
+    ]
+  };
+}
+```
+
+Field names support dotted paths and `[N]` array indexing. The generator reconstructs the full nested JSON structure — the example above produces:
+
+```json
+{
+  "field_violations": [
+    {
+      "description": "must be a valid email address.",
+      "field": "email"
+    }
+  ]
+}
+```
+
+If `detail_type` refers to a message defined in the same proto compilation, it is rendered as a hyperlink with a hover preview card.
+
 ## Nextra setup
 
-The generated MDX uses `<Tabs>` from `nextra/components`. Your Nextra project needs nextra v4+:
+Your Nextra project needs nextra v4+:
 
 ```sh
 bun add nextra nextra-theme-docs next react react-dom
