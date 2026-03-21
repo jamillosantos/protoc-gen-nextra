@@ -10,7 +10,7 @@ make install        # install binary locally
 make test           # generate testdata then run go test ./...
 make lint           # golangci-lint run ./...
 make testdata       # regenerate testdata/greeter.pb from proto (requires protoc)
-make generate       # run the plugin against test protos → testdata/content/
+make generate       # run the plugin against test protos → docs/content/
 make update-golden  # UPDATE_GOLDEN=1 go test ./... — update golden files after intentional changes
 make options        # regenerate nextra/options.pb.go from nextra/options.proto (requires protoc-gen-go)
 ```
@@ -31,7 +31,7 @@ This is a `protoc` compiler plugin. The binary is invoked by protoc/buf — it r
 4. `internal/generator/templates/service.tmpl` — Go template producing `.mdx` output; uses `[[ ]]` delimiters (not `{{ }}`) to avoid JSX conflicts
 5. `internal/generator/fields.go` — maps proto field kinds to human-readable type strings
 6. `internal/generator/funcmap.go` + `embed.go` — template helpers and `//go:embed` for single-binary distribution
-7. `nextra/options.proto` + `nextra/options.pb.go` — custom proto service option `(nextra.server_addr)` for per-service address override
+7. `nextra/options.proto` + `nextra/options.pb.go` — custom proto method option `(nextra.method_errors)` for per-method error documentation
 
 **Output:** One `.mdx` file per proto package, with a two-column layout per method: field tables on the left, grpcurl/Go usage tabs on the right (unary methods only).
 

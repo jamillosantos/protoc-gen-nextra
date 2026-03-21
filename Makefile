@@ -27,12 +27,12 @@ testdata/all.pb: $(PROTO_FILES)
 
 testdata: testdata/all.pb
 
-# Run the plugin against the test protos and write MDX pages to testdata/content/.
+# Run the plugin against the test protos and write MDX pages to docs/content/.
 generate: build testdata/all.pb
-	mkdir -p testdata/content
+	mkdir -p docs/content
 	protoc \
 		--plugin=protoc-gen-nextra=bin/$(BINARY) \
-		--nextra_out=testdata/content \
+		--nextra_out=docs/content \
 		-I testdata/proto \
 		-I . \
 		$(PROTO_FILES)
@@ -56,4 +56,4 @@ lint:
 
 clean:
 	rm -rf bin/ testdata/all.pb
-	find testdata/content -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
+	find docs/content -name '*.gen.mdx' -delete
