@@ -2,7 +2,7 @@
 
 A `protoc` plugin that generates [Nextra](https://nextra.site) MDX documentation pages from gRPC `.proto` files.
 
-![Screenshot of generated documentation](_assets/doc_screenshot.png)
+See a live example of the generated output at **[jamillosantos.github.io/protoc-gen-nextra](https://jamillosantos.github.io/protoc-gen-nextra)**.
 
 ## What it does
 
