@@ -1,6 +1,7 @@
-
 # v1
 
+
+## Greeter
 
 
 GreeterService provides greeting functionality.
@@ -14,8 +15,6 @@ GreeterService provides greeting functionality.
 
 SayHello sends a greeting to the server.
 
-<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
-<div style={{flex:'1 1 400px',minWidth:0}}>
 
 #### Request: HelloRequest
 
@@ -91,9 +90,6 @@ Detail type: `google.rpc.BadRequest`
 
 
 </div>
-</div>
-
-</div>
 
 ---
 
@@ -103,8 +99,6 @@ Detail type: `google.rpc.BadRequest`
 
 SayHelloStream streams greetings back to the client.
 
-<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
-<div style={{flex:'1 1 400px',minWidth:0}}>
 
 #### Request: HelloRequest
 
@@ -144,7 +138,65 @@ SayHelloStream streams greetings back to the client.
 
 
 </div>
-</div>
+
+
+
+## Farewell
+
+
+FarewellService provides farewell functionality.
+
+
+---
+
+<div style={{borderLeft: '3px solid #0070f3', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### SayGoodbye <span style={{backgroundColor: '#0070f3', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>UNARY</span>
+
+SayGoodbye sends a farewell message.
+
+
+#### Request: GoodbyeRequest
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>name is the name of the person to say goodbye to.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Response: GoodbyeReply
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>message</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>message is the farewell message.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Errors
+
+
+##### `NOT_FOUND`
+
+the requested person was not found.
+
+
+
 
 </div>
 

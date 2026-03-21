@@ -35,6 +35,33 @@ service Greeter {
   rpc SayHelloStream (HelloRequest) returns (stream HelloReply);
 }
 
+// FarewellService provides farewell functionality.
+service Farewell {
+  // SayGoodbye sends a farewell message.
+  rpc SayGoodbye (GoodbyeRequest) returns (GoodbyeReply) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "the requested person was not found."
+        }
+      ]
+    };
+  }
+}
+
+// GoodbyeRequest is the request message for the Farewell service.
+message GoodbyeRequest {
+  // name is the name of the person to say goodbye to.
+  string name = 1;
+}
+
+// GoodbyeReply is the response message for the Farewell service.
+message GoodbyeReply {
+  // message is the farewell message.
+  string message = 1;
+}
+
 // HelloRequest is the request message for the Greeter service.
 message HelloRequest {
   // name is the name of the person to greet.
