@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-.nextra-toc {
-  display: none !important;
-}
-
 /* ------------------------------------------------------------------ */
 /* x-type-link — cross-package type reference                          */
 /* ------------------------------------------------------------------ */

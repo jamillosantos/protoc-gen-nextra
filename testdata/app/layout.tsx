@@ -30,6 +30,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           footer={<Footer />}
           pageMap={pageMap}
           copyPageButton={false}
+          editLink={null}
+          feedback={{ content: null }}
           docsRepositoryBase="https://github.com/jamillosantos/protoc-gen-nextra"
         >
           {children}
