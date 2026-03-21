@@ -71,38 +71,116 @@ Send delivers a notification to a recipient.
 
 #### Errors
 
-<table style={{width:'100%',borderCollapse:'collapse'}}>
-<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
-<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Code</th>
-<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
-</tr></thead>
-<tbody>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>INVALID_ARGUMENT</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.BadRequest</code> one or more fields failed validation.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>field_violations[].field</code>: <code>recipient.email</code></li><li><code>field_violations[].description</code>: <code>must be a valid email address.</code></li><li><code>field_violations[].field</code>: <code>subject</code></li><li><code>field_violations[].description</code>: <code>must not be empty.</code></li><li><code>field_violations[].field</code>: <code>body</code></li><li><code>field_violations[].description</code>: <code>must not exceed 10 000 characters.</code></li></ul></td>
-</tr>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>RESOURCE_EXHAUSTED</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.QuotaFailure</code> the caller has exceeded its notification quota.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>violations[].subject</code>: <code>notifications/day</code></li><li><code>violations[].description</code>: <code>daily send limit reached.</code></li><li><code>violations[].subject</code>: <code>notifications/second</code></li><li><code>violations[].description</code>: <code>rate limit exceeded; back off and retry.</code></li></ul></td>
-</tr>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>NOT_FOUND</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.ResourceInfo</code> the target resource could not be located.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>resource_type</code>: <code>Recipient</code></li><li><code>resource_name</code>: <code>recipient.user_id</code></li></ul></td>
-</tr>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>FAILED_PRECONDITION</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.PreconditionFailure</code> the account is not in a state that allows sending.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>violations[].type</code>: <code>ACCOUNT_SUSPENDED</code></li><li><code>violations[].description</code>: <code>the sending account has been suspended.</code></li><li><code>violations[].type</code>: <code>EMAIL_UNVERIFIED</code></li><li><code>violations[].description</code>: <code>the sender email has not been verified.</code></li></ul></td>
-</tr>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>UNAUTHENTICATED</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.ErrorInfo</code> the request could not be authenticated.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>reason</code>: <code>INVALID_TOKEN</code></li><li><code>domain</code>: <code>notifier.example.com</code></li></ul></td>
-</tr>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>UNAVAILABLE</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.RetryInfo</code> the service is temporarily unavailable; retry after the indicated delay.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>retry_delay</code>: <code>5s</code></li></ul></td>
-</tr>
-</tbody>
-</table>
+##### `INVALID_ARGUMENT`
+
+one or more fields failed validation.
+
+Detail type: <TypePreview name="shared.notifications.v1.ValidationFailure" href="/shared/notifications/v1#validationfailure" fields={[{"name":"field","type":"string"},{"name":"reason","type":"string"}]}/>
+
+
+```json
+{
+  "field": "recipient.email | subject | body",
+  "reason": "human-readable constraint violation"
+}
+```
+
+
+##### `RESOURCE_EXHAUSTED`
+
+the caller has exceeded its notification quota.
+
+Detail type: `google.rpc.QuotaFailure`
+
+
+```json
+{
+  "violations": [
+    {
+      "description": "daily send limit reached.",
+      "subject": "notifications/day"
+    },
+    {
+      "description": "rate limit exceeded; back off and retry.",
+      "subject": "notifications/second"
+    }
+  ]
+}
+```
+
+
+##### `NOT_FOUND`
+
+the target resource could not be located.
+
+Detail type: `google.rpc.ResourceInfo`
+
+
+```json
+{
+  "resource_name": "recipient.user_id",
+  "resource_type": "Recipient"
+}
+```
+
+
+##### `NOT_FOUND`
+
+the recipient user does not exist.
+
+
+##### `FAILED_PRECONDITION`
+
+the account is not in a state that allows sending.
+
+Detail type: `google.rpc.PreconditionFailure`
+
+
+```json
+{
+  "violations": [
+    {
+      "description": "the sending account has been suspended.",
+      "type": "ACCOUNT_SUSPENDED"
+    },
+    {
+      "description": "the sender email has not been verified.",
+      "type": "EMAIL_UNVERIFIED"
+    }
+  ]
+}
+```
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+##### `UNAVAILABLE`
+
+the service is temporarily unavailable; retry after the indicated delay.
+
+Detail type: `google.rpc.RetryInfo`
+
+
+```json
+{
+  "retry_delay": "5s"
+}
+```
+
+
 
 
 </div>
@@ -169,6 +247,43 @@ Subscribe opens a live stream of incoming notifications for a user.
 </table>
 
 
+#### Errors
+
+##### `NOT_FOUND`
+
+the user does not exist.
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+##### `UNAVAILABLE`
+
+the service is temporarily unavailable; retry after the indicated delay.
+
+Detail type: `google.rpc.RetryInfo`
+
+
+```json
+{
+  "retry_delay": "5s"
+}
+```
+
+
+
 
 </div>
 </div>
@@ -220,6 +335,29 @@ Acknowledge bulk-acknowledges a stream of notification IDs.
 </tr>
 </tbody>
 </table>
+
+
+#### Errors
+
+##### `NOT_FOUND`
+
+one or more notification IDs do not exist.
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
 
 
 
@@ -285,6 +423,48 @@ Chat opens a bidirectional stream for real-time messaging.
 </tr>
 </tbody>
 </table>
+
+
+#### Errors
+
+##### `NOT_FOUND`
+
+the target user for the chat session does not exist.
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+##### `RESOURCE_EXHAUSTED`
+
+the caller has exceeded its concurrent stream limit.
+
+Detail type: `google.rpc.QuotaFailure`
+
+
+```json
+{
+  "violations": [
+    {
+      "description": "maximum concurrent chat streams reached.",
+      "subject": "chat/concurrent_streams"
+    }
+  ]
+}
+```
+
 
 
 

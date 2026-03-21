@@ -55,22 +55,34 @@ SayHello sends a greeting to the server.
 
 #### Errors
 
-<table style={{width:'100%',borderCollapse:'collapse'}}>
-<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
-<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Code</th>
-<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
-</tr></thead>
-<tbody>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>NOT_FOUND</span></td>
-<td style={{padding:'8px 12px'}}>the requested person was not found.</td>
-</tr>
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>INVALID_ARGUMENT</span></td>
-<td style={{padding:'8px 12px'}}><code>google.rpc.BadRequest</code> input validation failed.<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}><li><code>field_violations[].field</code>: <code>name</code></li><li><code>field_violations[].description</code>: <code>must not be empty.</code></li><li><code>field_violations[].field</code>: <code>language</code></li><li><code>field_violations[].description</code>: <code>must be a valid BCP-47 language tag.</code></li></ul></td>
-</tr>
-</tbody>
-</table>
+##### `NOT_FOUND`
+
+the requested person was not found.
+
+
+##### `INVALID_ARGUMENT`
+
+input validation failed.
+
+Detail type: `google.rpc.BadRequest`
+
+
+```json
+{
+  "field_violations": [
+    {
+      "description": "must not be empty.",
+      "field": "name"
+    },
+    {
+      "description": "must be a valid BCP-47 language tag.",
+      "field": "language"
+    }
+  ]
+}
+```
+
+
 
 
 </div>

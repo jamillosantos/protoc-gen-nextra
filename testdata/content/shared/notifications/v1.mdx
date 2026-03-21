@@ -27,6 +27,29 @@ Timestamp represents a point in time.
 
 ---
 
+### ValidationFailure
+
+ValidationFailure describes a single field-level validation error.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>field</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>field is the dot-separated path of the field that failed validation.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>reason</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>reason is a human-readable explanation of the violated constraint.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
 ### Recipient
 
 Recipient identifies who should receive a notification.
