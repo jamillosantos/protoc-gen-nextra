@@ -1,6 +1,5 @@
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head } from 'nextra/components'
-import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
@@ -20,7 +19,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       logo={<span style={{ fontWeight: 700 }}>gRPC Docs</span>}
     />
   )
-  const pageMap = await getPageMap()
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head />
@@ -28,7 +26,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <Layout
           navbar={navbar}
           footer={<Footer />}
-          pageMap={pageMap}
+          pageMap={[]}
+          copyPageButton={false}
           docsRepositoryBase="https://github.com/jamillosantos/protoc-gen-nextra"
         >
           {children}
