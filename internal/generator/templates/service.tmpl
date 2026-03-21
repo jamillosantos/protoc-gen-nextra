@@ -66,21 +66,20 @@ _No fields._
 [[ end ]]
 [[ if .Errors ]]
 #### Errors
-
-<table style={{width:'100%',borderCollapse:'collapse'}}>
-<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
-<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Code</th>
-<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
-</tr></thead>
-<tbody>
-[[ range .Errors -]]
-<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
-<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><span style={{fontSize:'0.75rem',background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontFamily:'monospace'}}>[[ .Code ]]</span></td>
-<td style={{padding:'8px 12px'}}>[[ if .DetailType ]]<code>[[ .DetailType ]]</code> [[ end ]][[ if .Description ]][[ .Description ]][[ end ]][[ if .Fields ]]<ul style={{margin:'0.5rem 0 0',paddingLeft:'1.25rem'}}>[[ range .Fields ]]<li><code>[[ .Name ]]</code>[[ if .Value ]]: <code>[[ .Value ]]</code>[[ end ]]</li>[[ end ]]</ul>[[ end ]]</td>
-</tr>
+[[ range .Errors ]]
+##### `[[ .Code ]]`
+[[ if .Description ]]
+[[ .Description ]]
 [[ end -]]
-</tbody>
-</table>
+[[ if .Fields ]]
+[[ if .DetailType ]]Detail type: [[ if .DetailTypePreview ]]<TypePreview name="[[ .DetailType ]]" href="[[ .DetailTypeLink ]]" fields={[[ .DetailTypePreview.ItemsJSON ]]}/>[[- else if .DetailTypeLink ]]<a href="[[ .DetailTypeLink ]]" className="x-type-link"><code>[[ .DetailType ]]</code></a>[[ else ]]`[[ .DetailType ]]`[[ end ]]
+
+[[ end ]]
+```json
+[[ .FieldsJSON ]]
+```
+[[ end ]]
+[[ end ]]
 [[ end ]]
 
 </div>

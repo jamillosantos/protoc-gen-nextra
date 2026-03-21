@@ -33,10 +33,31 @@ func GenerateFile(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 		return nil
 	}
 
+	cfg.typeIndex, cfg.typeMessageIndex = buildTypeIndex(gen.Files)
+
 	if cfg.SplitServices && len(f.Services) > 0 {
 		return generateSplit(gen, f, cfg)
 	}
 	return generateCombined(gen, f, cfg)
+}
+
+// buildTypeIndex builds a map from fully-qualified proto message name to MDX
+// page link (with anchor) for all messages in the given files.
+func buildTypeIndex(files []*protogen.File) (map[string]string, map[string]*protogen.Message) {
+	links := make(map[string]string)
+	msgs := make(map[string]*protogen.Message)
+	for _, f := range files {
+		if len(f.Messages) == 0 && len(f.Enums) == 0 && len(f.Services) == 0 {
+			continue
+		}
+		pageDir := filepath.Dir(string(f.Desc.Path()))
+		for _, msg := range f.Messages {
+			fqn := string(msg.Desc.FullName())
+			links[fqn] = "/" + pageDir + "#" + strings.ToLower(string(msg.Desc.Name()))
+			msgs[fqn] = msg
+		}
+	}
+	return links, msgs
 }
 
 // generateCombined writes one MDX file containing all services in the proto file.
@@ -124,16 +145,23 @@ type MethodData struct {
 
 // ErrorData holds template data for a single documented error.
 type ErrorData struct {
-	Code        string
-	Description string
-	DetailType  string
-	Fields      []ErrorDetailFieldData
+	Code              string
+	Description       string
+	DetailType        string
+	DetailTypeLink    string           // non-empty when DetailType resolves to a locally-known type
+	DetailTypePreview *TypePreviewData // non-nil when DetailType is local and TypePreviews is enabled
+	Fields            []ErrorDetailFieldData
 }
 
 // ErrorDetailFieldData is a free-form field annotation for an error detail type.
 type ErrorDetailFieldData struct {
 	Name  string
 	Value string
+}
+
+// FieldsJSON serialises the Fields slice as an indented JSON object.
+func (e ErrorData) FieldsJSON() string {
+	return FieldsToJSON(e.Fields)
 }
 
 // StreamingType returns a short label for the RPC streaming mode.
@@ -289,9 +317,15 @@ func buildServiceData(f *protogen.File, svc *protogen.Service, cfg Config) Servi
 			if me, ok := proto.GetExtension(mopts, nextraopt.E_MethodErrors).(*nextraopt.MethodErrors); ok {
 				for _, e := range me.GetErrors() {
 					ed := ErrorData{
-						Code:        e.GetCode(),
-						Description: e.GetDescription(),
-						DetailType:  e.GetDetailType(),
+						Code:           e.GetCode(),
+						Description:    e.GetDescription(),
+						DetailType:     e.GetDetailType(),
+						DetailTypeLink: cfg.typeIndex[e.GetDetailType()],
+					}
+					if cfg.TypePreviews {
+						if msg, ok := cfg.typeMessageIndex[e.GetDetailType()]; ok {
+							ed.DetailTypePreview = buildMessagePreview(e.GetDetailType(), msg)
+						}
 					}
 					for _, f := range e.GetFields() {
 						ed.Fields = append(ed.Fields, ErrorDetailFieldData{

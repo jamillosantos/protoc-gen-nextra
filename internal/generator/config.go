@@ -1,5 +1,7 @@
 package generator
 
+import "google.golang.org/protobuf/compiler/protogen"
+
 // Config holds the options passed to the plugin via --nextra_opt.
 type Config struct {
 	// SplitServices generates one MDX page per service instead of one per package.
@@ -24,4 +26,12 @@ type Config struct {
 	// Default: "localhost:50051".
 	// Set with: --nextra_opt=server_addr=api.example.com:443
 	ServerAddr string
+
+	// typeIndex is an internal map from fully-qualified proto type name to MDX
+	// page link (with anchor). Built once from all files in the compilation.
+	typeIndex map[string]string
+
+	// typeMessageIndex maps fully-qualified proto type names to their message
+	// descriptors, used to build TypePreview data for error detail types.
+	typeMessageIndex map[string]*protogen.Message
 }
