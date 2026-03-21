@@ -1,0 +1,65 @@
+import { Tabs } from 'nextra/components'
+
+# Greeter
+
+GreeterService provides greeting functionality.
+
+**Package:** `helloworld`
+
+---
+
+<div style={{borderLeft: '3px solid #0070f3', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### <span style={{backgroundColor: '#0070f3', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>UNARY</span> SayHello
+
+SayHello sends a greeting to the server.
+
+<Tabs items={['Request: HelloRequest', 'Response: HelloReply']}>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `name` | `string` |  | name is the name of the person to greet. |
+| `language` | `string` | <span style={{fontSize:'0.7rem',background:'#9ca3af',color:'white',padding:'1px 6px',borderRadius:'3px'}}>optional</span> | language optionally selects the greeting language. |
+
+</Tabs.Tab>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `message` | `string` |  | message is the greeting message. |
+
+</Tabs.Tab>
+</Tabs>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #7928ca', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### <span style={{backgroundColor: '#7928ca', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>SERVER STREAM</span> SayHelloStream
+
+SayHelloStream streams greetings back to the client.
+
+<Tabs items={['Request: HelloRequest', 'Response: HelloReply']}>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `name` | `string` |  | name is the name of the person to greet. |
+| `language` | `string` | <span style={{fontSize:'0.7rem',background:'#9ca3af',color:'white',padding:'1px 6px',borderRadius:'3px'}}>optional</span> | language optionally selects the greeting language. |
+
+</Tabs.Tab>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `message` | `string` |  | message is the greeting message. |
+
+</Tabs.Tab>
+</Tabs>
+
+</div>
+
+

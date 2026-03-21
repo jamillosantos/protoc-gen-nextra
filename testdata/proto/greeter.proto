@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package helloworld;
+
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/helloworld";
+
+// GreeterService provides greeting functionality.
+service Greeter {
+  // SayHello sends a greeting to the server.
+  rpc SayHello (HelloRequest) returns (HelloReply);
+
+  // SayHelloStream streams greetings back to the client.
+  rpc SayHelloStream (HelloRequest) returns (stream HelloReply);
+}
+
+// HelloRequest is the request message for the Greeter service.
+message HelloRequest {
+  // name is the name of the person to greet.
+  string name = 1;
+
+  // language optionally selects the greeting language.
+  optional string language = 2;
+}
+
+// HelloReply is the response message for the Greeter service.
+message HelloReply {
+  // message is the greeting message.
+  string message = 1;
+}
