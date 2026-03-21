@@ -34,6 +34,9 @@ go.work.sum
 # Build output
 bin/
 
+# Generated test artifacts
+testdata/all.pb
+
 # Nextra / Next.js
 testdata/.next/
 testdata/out/

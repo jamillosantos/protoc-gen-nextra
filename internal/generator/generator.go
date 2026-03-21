@@ -2,12 +2,17 @@ package generator
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
 	"text/template"
 
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+
+	nextraopt "github.com/jamillosantos/protoc-gen-nextra/nextra"
 )
 
 //go:generate go run github.com/jamillosantos/protoc-gen-nextra/internal/embedgen
@@ -20,40 +25,104 @@ func init() {
 }
 
 // GenerateFile generates Nextra MDX documentation for a single .proto file.
-func GenerateFile(gen *protogen.Plugin, f *protogen.File) error {
-	if len(f.Services) == 0 {
+// When cfg.SplitServices is true, each service gets its own page under <proto_dir>/<service>.mdx.
+// Otherwise all services are combined into a single <proto_dir>.mdx page.
+// Files with no services, messages, or enums are skipped.
+func GenerateFile(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
+	if len(f.Services) == 0 && len(f.Messages) == 0 && len(f.Enums) == 0 {
 		return nil
 	}
 
+	cfg.typeIndex, cfg.typeMessageIndex = buildTypeIndex(gen.Files)
+
+	if cfg.SplitServices && len(f.Services) > 0 {
+		return generateSplit(gen, f, cfg)
+	}
+	return generateCombined(gen, f, cfg)
+}
+
+// buildTypeIndex builds a map from fully-qualified proto message name to MDX
+// page link (with anchor) for all messages in the given files.
+func buildTypeIndex(files []*protogen.File) (map[string]string, map[string]*protogen.Message) {
+	links := make(map[string]string)
+	msgs := make(map[string]*protogen.Message)
+	for _, f := range files {
+		if len(f.Messages) == 0 && len(f.Enums) == 0 && len(f.Services) == 0 {
+			continue
+		}
+		pageDir := filepath.Dir(string(f.Desc.Path()))
+		for _, msg := range f.Messages {
+			fqn := string(msg.Desc.FullName())
+			links[fqn] = "/" + pageDir + "#" + strings.ToLower(string(msg.Desc.Name()))
+			msgs[fqn] = msg
+		}
+	}
+	return links, msgs
+}
+
+// generateCombined writes one MDX file containing all services in the proto file.
+func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
+	// Output path: <proto_directory>.mdx (e.g. greeter/v1/greeter.proto → greeter/v1.mdx)
+	outPath := filepath.Dir(f.Desc.Path()) + ".mdx"
+	return renderPage(gen, f, outPath, buildPackageData(f, outPath, cfg))
+}
+
+// generateSplit writes one MDX file per service inside <proto_directory>/<service>.mdx.
+func generateSplit(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
+	dir := filepath.Dir(f.Desc.Path())
 	for _, svc := range f.Services {
-		if err := generateService(gen, f, svc); err != nil {
+		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".mdx")
+		data := buildSingleServiceData(f, svc, outPath, cfg)
+		if err := renderPage(gen, f, outPath, data); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func generateService(gen *protogen.Plugin, f *protogen.File, svc *protogen.Service) error {
-	// Output path: <proto_package_path>/<ServiceName>.mdx
-	protoPath := strings.TrimSuffix(f.Desc.Path(), ".proto")
-	outPath := filepath.Join(protoPath, snakeit(string(svc.Desc.Name()))+".mdx")
-
+func renderPage(gen *protogen.Plugin, f *protogen.File, outPath string, data PackageData) error {
 	g := gen.NewGeneratedFile(outPath, f.GoImportPath)
-
-	data := buildServiceData(f, svc)
-
 	var buf bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&buf, "service.tmpl", data); err != nil {
-		return fmt.Errorf("executing template for service %s: %w", svc.Desc.Name(), err)
+		return fmt.Errorf("executing template for %s: %w", outPath, err)
 	}
-
 	g.P(buf.String())
 	return nil
 }
 
-// ServiceData holds all template data for a service page.
+// PackageData holds all template data for a package page.
+type PackageData struct {
+	Title               string
+	PackageName         string
+	ShowServiceHeadings bool
+	HasUsageExamples    bool // true if any unary method has generated examples
+	Services            []ServiceData
+	Messages            []MessageData
+	Enums               []EnumData
+}
+
+// MessageData holds template data for a top-level message type.
+type MessageData struct {
+	Name        string
+	Description string
+	Fields      []FieldData
+}
+
+// EnumData holds template data for a top-level enum type.
+type EnumData struct {
+	Name        string
+	Description string
+	Values      []EnumValueData
+}
+
+// EnumValueData holds template data for a single enum value.
+type EnumValueData struct {
+	Name        string
+	Description string
+}
+
+// ServiceData holds all template data for a single service.
 type ServiceData struct {
-	PackageName string
 	ServiceName string
 	Description string
 	Methods     []MethodData
@@ -69,6 +138,30 @@ type MethodData struct {
 	ServerStreaming  bool
 	RequestFields   []FieldData
 	ResponseFields  []FieldData
+	Errors          []ErrorData
+	GrpcurlExample  string // non-empty for unary methods only
+	GoExample       string // non-empty for unary methods only
+}
+
+// ErrorData holds template data for a single documented error.
+type ErrorData struct {
+	Code              string
+	Description       string
+	DetailType        string
+	DetailTypeLink    string           // non-empty when DetailType resolves to a locally-known type
+	DetailTypePreview *TypePreviewData // non-nil when DetailType is local and TypePreviews is enabled
+	Fields            []ErrorDetailFieldData
+}
+
+// ErrorDetailFieldData is a free-form field annotation for an error detail type.
+type ErrorDetailFieldData struct {
+	Name  string
+	Value string
+}
+
+// FieldsJSON serialises the Fields slice as an indented JSON object.
+func (e ErrorData) FieldsJSON() string {
+	return FieldsToJSON(e.Fields)
 }
 
 // StreamingType returns a short label for the RPC streaming mode.
@@ -103,47 +196,214 @@ func (m MethodData) BadgeColor() string {
 type FieldData struct {
 	Name        string
 	Type        string
+	Link        string           // non-empty when Type is defined in a different package
+	Preview     *TypePreviewData // non-nil when Link is set and TypePreviews is enabled
 	Description string
 	Optional    bool
 	Repeated    bool
 }
 
-func buildServiceData(f *protogen.File, svc *protogen.Service) ServiceData {
-	data := ServiceData{
-		PackageName: string(f.Desc.Package()),
-		ServiceName: string(svc.Desc.Name()),
-		Description: commentString(svc.Comments),
-	}
+// TypePreviewData holds the summarised data shown in the hover preview card.
+type TypePreviewData struct {
+	Name  string
+	Items []PreviewItem
+}
 
-	for _, m := range svc.Methods {
-		md := MethodData{
-			Name:           string(m.Desc.Name()),
-			Description:    commentString(m.Comments),
-			RequestType:    string(m.Input.Desc.Name()),
-			ResponseType:   string(m.Output.Desc.Name()),
-			ClientStreaming: m.Desc.IsStreamingClient(),
-			ServerStreaming: m.Desc.IsStreamingServer(),
-			RequestFields:  buildFields(m.Input),
-			ResponseFields: buildFields(m.Output),
+// ItemsJSON returns the Items slice serialised as a JSON array for use as a JSX prop.
+func (p *TypePreviewData) ItemsJSON() string {
+	b, _ := json.Marshal(p.Items)
+	return string(b)
+}
+
+// PreviewItem is a single row in the hover preview card.
+type PreviewItem struct {
+	Name     string `json:"name"`
+	Type     string `json:"type,omitempty"`
+	Optional bool   `json:"optional,omitempty"`
+	Repeated bool   `json:"repeated,omitempty"`
+}
+
+func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData {
+	data := PackageData{
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
+		PackageName:         string(f.Desc.Package()),
+		ShowServiceHeadings: len(f.Services) > 1,
+	}
+	inlined := make(map[string]bool)
+	for _, svc := range f.Services {
+		data.Services = append(data.Services, buildServiceData(f, svc, cfg))
+		for _, m := range svc.Methods {
+			inlined[string(m.Input.Desc.Name())] = true
+			inlined[string(m.Output.Desc.Name())] = true
 		}
-		data.Methods = append(data.Methods, md)
 	}
-
+	for _, msg := range f.Messages {
+		if inlined[string(msg.Desc.Name())] {
+			continue
+		}
+		data.Messages = append(data.Messages, MessageData{
+			Name:        string(msg.Desc.Name()),
+			Description: commentString(msg.Comments),
+			Fields:      buildFields(msg, cfg),
+		})
+	}
+	for _, svc := range data.Services {
+		for _, m := range svc.Methods {
+			if m.GrpcurlExample != "" {
+				data.HasUsageExamples = true
+			}
+		}
+	}
+	for _, enum := range f.Enums {
+		ed := EnumData{
+			Name:        string(enum.Desc.Name()),
+			Description: commentString(enum.Comments),
+		}
+		for _, v := range enum.Values {
+			ed.Values = append(ed.Values, EnumValueData{
+				Name:        string(v.Desc.Name()),
+				Description: commentString(v.Comments),
+			})
+		}
+		data.Enums = append(data.Enums, ed)
+	}
 	return data
 }
 
-func buildFields(msg *protogen.Message) []FieldData {
+func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string, cfg Config) PackageData {
+	sd := buildServiceData(f, svc, cfg)
+	hasExamples := false
+	for _, m := range sd.Methods {
+		if m.GrpcurlExample != "" {
+			hasExamples = true
+			break
+		}
+	}
+	return PackageData{
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
+		PackageName:         string(f.Desc.Package()),
+		ShowServiceHeadings: false,
+		HasUsageExamples:    hasExamples,
+		Services:            []ServiceData{sd},
+	}
+}
+
+func buildServiceData(f *protogen.File, svc *protogen.Service, cfg Config) ServiceData {
+	sd := ServiceData{
+		ServiceName: string(svc.Desc.Name()),
+		Description: commentString(svc.Comments),
+	}
+	// Resolve server address: service option takes priority over plugin-level config.
+	svcServerAddr := cfg.ServerAddr
+	if opts := svc.Desc.Options(); opts != nil && proto.HasExtension(opts, nextraopt.E_ServerAddr) {
+		if v, ok := proto.GetExtension(opts, nextraopt.E_ServerAddr).(string); ok && v != "" {
+			svcServerAddr = v
+		}
+	}
+
+	pkg := string(f.Desc.Package())
+	for _, m := range svc.Methods {
+		md := MethodData{
+			Name:            string(m.Desc.Name()),
+			Description:     commentString(m.Comments),
+			RequestType:     string(m.Input.Desc.Name()),
+			ResponseType:    string(m.Output.Desc.Name()),
+			ClientStreaming:  m.Desc.IsStreamingClient(),
+			ServerStreaming:  m.Desc.IsStreamingServer(),
+			RequestFields:   buildFields(m.Input, cfg),
+			ResponseFields:  buildFields(m.Output, cfg),
+		}
+		if mopts := m.Desc.Options(); mopts != nil && proto.HasExtension(mopts, nextraopt.E_MethodErrors) {
+			if me, ok := proto.GetExtension(mopts, nextraopt.E_MethodErrors).(*nextraopt.MethodErrors); ok {
+				for _, e := range me.GetErrors() {
+					ed := ErrorData{
+						Code:           e.GetCode(),
+						Description:    e.GetDescription(),
+						DetailType:     e.GetDetailType(),
+						DetailTypeLink: cfg.typeIndex[e.GetDetailType()],
+					}
+					if cfg.TypePreviews {
+						if msg, ok := cfg.typeMessageIndex[e.GetDetailType()]; ok {
+							ed.DetailTypePreview = buildMessagePreview(e.GetDetailType(), msg)
+						}
+					}
+					for _, f := range e.GetFields() {
+						ed.Fields = append(ed.Fields, ErrorDetailFieldData{
+							Name:  f.GetName(),
+							Value: f.GetValue(),
+						})
+					}
+					md.Errors = append(md.Errors, ed)
+				}
+			}
+		}
+
+		if cfg.Examples && !m.Desc.IsStreamingClient() && !m.Desc.IsStreamingServer() {
+			cfgWithAddr := cfg
+			cfgWithAddr.ServerAddr = svcServerAddr
+			md.GrpcurlExample = buildGrpcurlExample(pkg, string(svc.Desc.Name()), string(m.Desc.Name()), m, cfgWithAddr.ServerAddr)
+			md.GoExample = buildGoExample(f, svc, m, cfgWithAddr)
+		}
+		sd.Methods = append(sd.Methods, md)
+	}
+	return sd
+}
+
+func buildFields(msg *protogen.Message, cfg Config) []FieldData {
+	currentPkg := msg.Desc.ParentFile().Package()
 	var fields []FieldData
 	for _, f := range msg.Fields {
-		fields = append(fields, FieldData{
+		fd := FieldData{
 			Name:        string(f.Desc.Name()),
 			Type:        fieldTypeName(f),
 			Description: commentString(f.Comments),
 			Repeated:    f.Desc.IsList(),
 			Optional:    f.Desc.HasOptionalKeyword(),
-		})
+		}
+		switch f.Desc.Kind() {
+		case protoreflect.MessageKind, protoreflect.GroupKind:
+			typePkg := f.Message.Desc.ParentFile().Package()
+			if typePkg != currentPkg {
+				fd.Type = string(typePkg) + "." + string(f.Message.Desc.Name())
+				fd.Link = "/" + filepath.Dir(string(f.Message.Desc.ParentFile().Path())) + "#" + strings.ToLower(string(f.Message.Desc.Name()))
+				if cfg.TypePreviews {
+					fd.Preview = buildMessagePreview(fd.Type, f.Message)
+				}
+			}
+		case protoreflect.EnumKind:
+			typePkg := f.Enum.Desc.ParentFile().Package()
+			if typePkg != currentPkg {
+				fd.Type = string(typePkg) + "." + string(f.Enum.Desc.Name())
+				fd.Link = "/" + filepath.Dir(string(f.Enum.Desc.ParentFile().Path())) + "#" + strings.ToLower(string(f.Enum.Desc.Name()))
+				if cfg.TypePreviews {
+					fd.Preview = buildEnumPreview(fd.Type, f.Enum)
+				}
+			}
+		}
+		fields = append(fields, fd)
 	}
 	return fields
+}
+
+func buildMessagePreview(name string, msg *protogen.Message) *TypePreviewData {
+	p := &TypePreviewData{Name: name}
+	for _, f := range msg.Fields {
+		p.Items = append(p.Items, PreviewItem{
+			Name:     string(f.Desc.Name()),
+			Type:     fieldTypeName(f),
+			Optional: f.Desc.HasOptionalKeyword(),
+			Repeated: f.Desc.IsList(),
+		})
+	}
+	return p
+}
+
+func buildEnumPreview(name string, enum *protogen.Enum) *TypePreviewData {
+	p := &TypePreviewData{Name: name}
+	for _, v := range enum.Values {
+		p.Items = append(p.Items, PreviewItem{Name: string(v.Desc.Name())})
+	}
+	return p
 }
 
 func commentString(loc protogen.CommentSet) string {

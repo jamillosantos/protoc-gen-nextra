@@ -1,0 +1,527 @@
+
+# v1
+
+
+
+NotificationService manages sending and receiving notifications.
+
+
+---
+
+<div style={{borderLeft: '3px solid #0070f3', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### Send <span style={{backgroundColor: '#0070f3', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>UNARY</span>
+
+Send delivers a notification to a recipient.
+
+<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
+<div style={{flex:'1 1 400px',minWidth:0}}>
+
+#### Request: SendRequest
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>recipient</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Recipient" href="/shared/notifications/v1#recipient" fields={[{"name":"user_id","type":"string"},{"name":"email","type":"string","optional":true},{"name":"phone","type":"string","optional":true}]}/><br/><br/>recipient is who the notification should be delivered to.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>subject</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>subject is the short title of the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>body</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>body is the full notification content.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>scheduled_at</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>scheduled_at optionally schedules delivery for a future time.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Response: SendResponse
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>notification_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>notification_id is the unique identifier assigned to the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>status</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.DeliveryStatus" href="/shared/notifications/v1#deliverystatus" fields={[{"name":"DELIVERY_STATUS_UNSPECIFIED"},{"name":"PENDING"},{"name":"DELIVERED"},{"name":"FAILED"},{"name":"READ"}]}/><br/><br/>status is the initial delivery status.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>queued_at</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>queued_at is the time the notification was accepted.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Errors
+
+
+##### `INVALID_ARGUMENT`
+
+one or more fields failed validation.
+
+Detail type: <TypePreview name="shared.notifications.v1.ValidationFailure" href="/shared/notifications/v1#validationfailure" fields={[{"name":"field","type":"string"},{"name":"reason","type":"string"}]}/>
+
+
+```json
+{
+  "field": "recipient.email | subject | body",
+  "reason": "human-readable constraint violation"
+}
+```
+
+
+
+---
+
+
+##### `RESOURCE_EXHAUSTED`
+
+the caller has exceeded its notification quota.
+
+Detail type: `google.rpc.QuotaFailure`
+
+
+```json
+{
+  "violations": [
+    {
+      "description": "daily send limit reached.",
+      "subject": "notifications/day"
+    },
+    {
+      "description": "rate limit exceeded; back off and retry.",
+      "subject": "notifications/second"
+    }
+  ]
+}
+```
+
+
+
+---
+
+
+##### `NOT_FOUND`
+
+the target resource could not be located.
+
+Detail type: `google.rpc.ResourceInfo`
+
+
+```json
+{
+  "resource_name": "recipient.user_id",
+  "resource_type": "Recipient"
+}
+```
+
+
+
+---
+
+
+##### `NOT_FOUND`
+
+the recipient user does not exist.
+
+
+
+---
+
+
+##### `FAILED_PRECONDITION`
+
+the account is not in a state that allows sending.
+
+Detail type: `google.rpc.PreconditionFailure`
+
+
+```json
+{
+  "violations": [
+    {
+      "description": "the sending account has been suspended.",
+      "type": "ACCOUNT_SUSPENDED"
+    },
+    {
+      "description": "the sender email has not been verified.",
+      "type": "EMAIL_UNVERIFIED"
+    }
+  ]
+}
+```
+
+
+
+---
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+
+---
+
+
+##### `UNAVAILABLE`
+
+the service is temporarily unavailable; retry after the indicated delay.
+
+Detail type: `google.rpc.RetryInfo`
+
+
+```json
+{
+  "retry_delay": "5s"
+}
+```
+
+
+
+
+</div>
+</div>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #7928ca', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### Subscribe <span style={{backgroundColor: '#7928ca', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>SERVER STREAM</span>
+
+Subscribe opens a live stream of incoming notifications for a user.
+
+<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
+<div style={{flex:'1 1 400px',minWidth:0}}>
+
+#### Request: SubscribeRequest
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>user_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>user_id identifies the user whose notifications to stream.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Response: Notification
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>notification_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>notification_id is the unique identifier of the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>subject</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>subject is the short title of the notification.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>body</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>body is the full notification content.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>status</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.DeliveryStatus" href="/shared/notifications/v1#deliverystatus" fields={[{"name":"DELIVERY_STATUS_UNSPECIFIED"},{"name":"PENDING"},{"name":"DELIVERED"},{"name":"FAILED"},{"name":"READ"}]}/><br/><br/>status is the current delivery status.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>sent_at is when the notification was originally sent.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Errors
+
+
+##### `NOT_FOUND`
+
+the user does not exist.
+
+
+
+---
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+
+---
+
+
+##### `UNAVAILABLE`
+
+the service is temporarily unavailable; retry after the indicated delay.
+
+Detail type: `google.rpc.RetryInfo`
+
+
+```json
+{
+  "retry_delay": "5s"
+}
+```
+
+
+
+
+</div>
+</div>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #f5a623', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### Acknowledge <span style={{backgroundColor: '#f5a623', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>CLIENT STREAM</span>
+
+Acknowledge bulk-acknowledges a stream of notification IDs.
+
+<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
+<div style={{flex:'1 1 400px',minWidth:0}}>
+
+#### Request: AcknowledgeRequest
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>notification_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>notification_id is the ID of the notification to acknowledge.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Response: AcknowledgeResponse
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>acknowledged_count</code></td>
+<td style={{padding:'8px 12px'}}><code>int32</code><br/><br/>acknowledged_count is how many notifications were successfully acknowledged.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>failed_ids</code></td>
+<td style={{padding:'8px 12px'}}><code>string[]</code><br/><br/>failed_ids contains IDs that could not be acknowledged.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Errors
+
+
+##### `NOT_FOUND`
+
+one or more notification IDs do not exist.
+
+
+
+---
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+
+
+</div>
+</div>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #e00', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### Chat <span style={{backgroundColor: '#e00', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginLeft: '0.5rem'}}>BIDI STREAM</span>
+
+Chat opens a bidirectional stream for real-time messaging.
+
+<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
+<div style={{flex:'1 1 400px',minWidth:0}}>
+
+#### Request: ChatMessage
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sender_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>sender_id is the user ID of the message author.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>text</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>text is the content of the message.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>sent_at is when the message was sent.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Response: ChatMessage
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sender_id</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>sender_id is the user ID of the message author.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>text</code></td>
+<td style={{padding:'8px 12px'}}><code>string</code><br/><br/>text is the content of the message.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>sent_at is when the message was sent.</td>
+</tr>
+</tbody>
+</table>
+
+
+#### Errors
+
+
+##### `NOT_FOUND`
+
+the target user for the chat session does not exist.
+
+
+
+---
+
+
+##### `UNAUTHENTICATED`
+
+the request could not be authenticated.
+
+Detail type: `google.rpc.ErrorInfo`
+
+
+```json
+{
+  "domain": "notifier.example.com",
+  "reason": "INVALID_TOKEN"
+}
+```
+
+
+
+---
+
+
+##### `RESOURCE_EXHAUSTED`
+
+the caller has exceeded its concurrent stream limit.
+
+Detail type: `google.rpc.QuotaFailure`
+
+
+```json
+{
+  "violations": [
+    {
+      "description": "maximum concurrent chat streams reached.",
+      "subject": "chat/concurrent_streams"
+    }
+  ]
+}
+```
+
+
+
+
+</div>
+</div>
+
+</div>
+
+
+
+
+

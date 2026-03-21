@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package shared.notifications.v1;
+
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/shared/notifications/v1";
+
+// Timestamp represents a point in time.
+message Timestamp {
+  // seconds is the number of seconds since Unix epoch.
+  int64 seconds = 1;
+
+  // nanos is the non-negative fractions of a second.
+  int32 nanos = 2;
+}
+
+// DeliveryStatus represents the delivery state of a notification.
+enum DeliveryStatus {
+  // DELIVERY_STATUS_UNSPECIFIED is the default unspecified status.
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+
+  // PENDING means the notification has been queued but not yet delivered.
+  PENDING = 1;
+
+  // DELIVERED means the notification was successfully sent to the recipient.
+  DELIVERED = 2;
+
+  // FAILED means the delivery attempt failed.
+  FAILED = 3;
+
+  // READ means the recipient has read the notification.
+  READ = 4;
+}
+
+// ValidationFailure describes a single field-level validation error.
+message ValidationFailure {
+  // field is the dot-separated path of the field that failed validation.
+  string field = 1;
+
+  // reason is a human-readable explanation of the violated constraint.
+  string reason = 2;
+}
+
+// Recipient identifies who should receive a notification.
+message Recipient {
+  // user_id is the internal identifier of the user.
+  string user_id = 1;
+
+  // email is the recipient's email address.
+  optional string email = 2;
+
+  // phone is the recipient's phone number in E.164 format.
+  optional string phone = 3;
+}

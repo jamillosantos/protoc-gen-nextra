@@ -17,7 +17,7 @@ import (
 // TestGenerateFile runs the generator against a pre-compiled descriptor set.
 // Generate the fixture with: make testdata
 func TestGenerateFile(t *testing.T) {
-	req := loadRequest(t, filepath.Join("..", "..", "testdata", "greeter.pb"))
+	req := loadRequest(t, filepath.Join("..", "..", "testdata", "all.pb"))
 
 	var genErr error
 
@@ -32,7 +32,7 @@ func TestGenerateFile(t *testing.T) {
 		if !f.Generate {
 			continue
 		}
-		if err := generator.GenerateFile(plugin, f); err != nil {
+		if err := generator.GenerateFile(plugin, f, generator.Config{TypePreviews: true, Examples: true}); err != nil {
 			genErr = err
 			break
 		}
@@ -74,7 +74,7 @@ func TestGenerateFile(t *testing.T) {
 
 // loadRequest reads a serialised FileDescriptorSet produced by
 //
-//	protoc --descriptor_set_out=testdata/greeter.pb --include_source_info testdata/proto/greeter.proto
+//	protoc --descriptor_set_out=testdata/all.pb --include_source_info --include_imports ...
 //
 // and converts it to a CodeGeneratorRequest that asks to generate all files.
 func loadRequest(t *testing.T, pbPath string) *pluginpb.CodeGeneratorRequest {

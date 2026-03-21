@@ -1,0 +1,238 @@
+syntax = "proto3";
+
+package notifier.v1;
+
+import "shared/notifications/v1/common.proto";
+import "nextra/options.proto";
+
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/rpc/notifier/v1";
+
+// NotificationService manages sending and receiving notifications.
+service NotificationService {
+  // Send delivers a notification to a recipient.
+  rpc Send (SendRequest) returns (SendResponse) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "INVALID_ARGUMENT",
+          description: "one or more fields failed validation.",
+          detail_type: "shared.notifications.v1.ValidationFailure",
+          fields: [
+            { name: "field", value: "recipient.email | subject | body" },
+            { name: "reason", value: "human-readable constraint violation" }
+          ]
+        },
+        {
+          code: "RESOURCE_EXHAUSTED",
+          description: "the caller has exceeded its notification quota.",
+          detail_type: "google.rpc.QuotaFailure",
+          fields: [
+            { name: "violations[0].subject",     value: "notifications/day" },
+            { name: "violations[0].description", value: "daily send limit reached." },
+            { name: "violations[1].subject",     value: "notifications/second" },
+            { name: "violations[1].description", value: "rate limit exceeded; back off and retry." }
+          ]
+        },
+        {
+          code: "NOT_FOUND",
+          description: "the target resource could not be located.",
+          detail_type: "google.rpc.ResourceInfo",
+          fields: [
+            { name: "resource_type", value: "Recipient" },
+            { name: "resource_name", value: "recipient.user_id" }
+          ]
+        },
+        {
+          code: "NOT_FOUND",
+          description: "the recipient user does not exist."
+        },
+        {
+          code: "FAILED_PRECONDITION",
+          description: "the account is not in a state that allows sending.",
+          detail_type: "google.rpc.PreconditionFailure",
+          fields: [
+            { name: "violations[0].type",        value: "ACCOUNT_SUSPENDED" },
+            { name: "violations[0].description", value: "the sending account has been suspended." },
+            { name: "violations[1].type",        value: "EMAIL_UNVERIFIED" },
+            { name: "violations[1].description", value: "the sender email has not been verified." }
+          ]
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        },
+        {
+          code: "UNAVAILABLE",
+          description: "the service is temporarily unavailable; retry after the indicated delay.",
+          detail_type: "google.rpc.RetryInfo",
+          fields: [
+            { name: "retry_delay", value: "5s" }
+          ]
+        }
+      ]
+    };
+  }
+
+  // Subscribe opens a live stream of incoming notifications for a user.
+  rpc Subscribe (SubscribeRequest) returns (stream Notification) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "the user does not exist."
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        },
+        {
+          code: "UNAVAILABLE",
+          description: "the service is temporarily unavailable; retry after the indicated delay.",
+          detail_type: "google.rpc.RetryInfo",
+          fields: [
+            { name: "retry_delay", value: "5s" }
+          ]
+        }
+      ]
+    };
+  }
+
+  // Acknowledge bulk-acknowledges a stream of notification IDs.
+  rpc Acknowledge (stream AcknowledgeRequest) returns (AcknowledgeResponse) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "one or more notification IDs do not exist."
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        }
+      ]
+    };
+  }
+
+  // Chat opens a bidirectional stream for real-time messaging.
+  rpc Chat (stream ChatMessage) returns (stream ChatMessage) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "the target user for the chat session does not exist."
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        },
+        {
+          code: "RESOURCE_EXHAUSTED",
+          description: "the caller has exceeded its concurrent stream limit.",
+          detail_type: "google.rpc.QuotaFailure",
+          fields: [
+            { name: "violations[0].subject",     value: "chat/concurrent_streams" },
+            { name: "violations[0].description", value: "maximum concurrent chat streams reached." }
+          ]
+        }
+      ]
+    };
+  }
+}
+
+// SendRequest is the request message for Send.
+message SendRequest {
+  // recipient is who the notification should be delivered to.
+  shared.notifications.v1.Recipient recipient = 1;
+
+  // subject is the short title of the notification.
+  string subject = 2;
+
+  // body is the full notification content.
+  string body = 3;
+
+  // scheduled_at optionally schedules delivery for a future time.
+  optional shared.notifications.v1.Timestamp scheduled_at = 4;
+}
+
+// SendResponse is the response message for Send.
+message SendResponse {
+  // notification_id is the unique identifier assigned to the notification.
+  string notification_id = 1;
+
+  // status is the initial delivery status.
+  shared.notifications.v1.DeliveryStatus status = 2;
+
+  // queued_at is the time the notification was accepted.
+  shared.notifications.v1.Timestamp queued_at = 3;
+}
+
+// SubscribeRequest is the request message for Subscribe.
+message SubscribeRequest {
+  // user_id identifies the user whose notifications to stream.
+  string user_id = 1;
+}
+
+// Notification is a single notification event pushed to a subscriber.
+message Notification {
+  // notification_id is the unique identifier of the notification.
+  string notification_id = 1;
+
+  // subject is the short title of the notification.
+  string subject = 2;
+
+  // body is the full notification content.
+  string body = 3;
+
+  // status is the current delivery status.
+  shared.notifications.v1.DeliveryStatus status = 4;
+
+  // sent_at is when the notification was originally sent.
+  shared.notifications.v1.Timestamp sent_at = 5;
+}
+
+// AcknowledgeRequest is a single item in the acknowledgement stream.
+message AcknowledgeRequest {
+  // notification_id is the ID of the notification to acknowledge.
+  string notification_id = 1;
+}
+
+// AcknowledgeResponse is the response message for Acknowledge.
+message AcknowledgeResponse {
+  // acknowledged_count is how many notifications were successfully acknowledged.
+  int32 acknowledged_count = 1;
+
+  // failed_ids contains IDs that could not be acknowledged.
+  repeated string failed_ids = 2;
+}
+
+// ChatMessage is a single message in a bidirectional chat stream.
+message ChatMessage {
+  // sender_id is the user ID of the message author.
+  string sender_id = 1;
+
+  // text is the content of the message.
+  string text = 2;
+
+  // sent_at is when the message was sent.
+  shared.notifications.v1.Timestamp sent_at = 3;
+}

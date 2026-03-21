@@ -1,0 +1,1322 @@
+
+# protobuf
+
+
+---
+
+### FileDescriptorSet
+
+The protocol compiler can output a FileDescriptorSet containing the .proto
+files it parses.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>file</code></td>
+<td style={{padding:'8px 12px'}}><code>FileDescriptorProto[]</code><br/><br/></td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### FileDescriptorProto
+
+Describes a complete .proto file.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>file name, relative to root of source tree</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>package</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>e.g. "foo", "foo.bar", etc.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>dependency</code></td>
+<td style={{padding:'8px 12px'}}><code>string[]</code><br/><br/>Names of files imported by this file.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>public_dependency</code></td>
+<td style={{padding:'8px 12px'}}><code>int32[]</code><br/><br/>Indexes of the public imported files in the dependency list above.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>weak_dependency</code></td>
+<td style={{padding:'8px 12px'}}><code>int32[]</code><br/><br/>Indexes of the weak imported files in the dependency list.
+For Google-internal migration only. Do not use.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>option_dependency</code></td>
+<td style={{padding:'8px 12px'}}><code>string[]</code><br/><br/>Names of files imported by this file purely for the purpose of providing
+option extensions. These are excluded from the dependency list above.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>message_type</code></td>
+<td style={{padding:'8px 12px'}}><code>DescriptorProto[]</code><br/><br/>All top-level definitions in this file.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>enum_type</code></td>
+<td style={{padding:'8px 12px'}}><code>EnumDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>service</code></td>
+<td style={{padding:'8px 12px'}}><code>ServiceDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>extension</code></td>
+<td style={{padding:'8px 12px'}}><code>FieldDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FileOptions</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>source_code_info</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>SourceCodeInfo</code><br/><br/>This field contains optional information about the original source code.
+You may safely remove this entire field without harming runtime
+functionality of the descriptors -- the information is needed only by
+development tools.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>syntax</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>The syntax of the proto file.
+The supported values are "proto2", "proto3", and "editions".
+
+If `edition` is present, this value must be "editions".
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>edition</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>Edition</code><br/><br/>The edition of the proto file.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### DescriptorProto
+
+Describes a message type.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>field</code></td>
+<td style={{padding:'8px 12px'}}><code>FieldDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>extension</code></td>
+<td style={{padding:'8px 12px'}}><code>FieldDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>nested_type</code></td>
+<td style={{padding:'8px 12px'}}><code>DescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>enum_type</code></td>
+<td style={{padding:'8px 12px'}}><code>EnumDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>extension_range</code></td>
+<td style={{padding:'8px 12px'}}><code>ExtensionRange[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>oneof_decl</code></td>
+<td style={{padding:'8px 12px'}}><code>OneofDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>MessageOptions</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>reserved_range</code></td>
+<td style={{padding:'8px 12px'}}><code>ReservedRange[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>reserved_name</code></td>
+<td style={{padding:'8px 12px'}}><code>string[]</code><br/><br/>Reserved field names, which may not be used by fields in the same message.
+A given name may only be reserved once.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>visibility</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>SymbolVisibility</code><br/><br/>Support for `export` and `local` keywords on enums.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### ExtensionRangeOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>declaration</code></td>
+<td style={{padding:'8px 12px'}}><code>Declaration[]</code><br/><br/>For external users: DO NOT USE. We are in the process of open sourcing
+extension declaration and executing internal cleanups before it can be
+used externally.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>verification</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>VerificationState</code><br/><br/>The verification state of the range.
+TODO: flip the default to DECLARATION once all empty ranges
+are marked as UNVERIFIED.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### FieldDescriptorProto
+
+Describes a field within a message.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>number</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>int32</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>label</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>Label</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>type</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>Type</code><br/><br/>If type_name is set, this need not be set.  If both this and type_name
+are set, this must be one of TYPE_ENUM, TYPE_MESSAGE or TYPE_GROUP.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>type_name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>For message and enum types, this is the name of the type.  If the name
+starts with a '.', it is fully-qualified.  Otherwise, C++-like scoping
+rules are used to find the type (i.e. first the nested types within this
+message are searched, then within the parent, on up to the root
+namespace).</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>extendee</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>For extensions, this is the name of the type being extended.  It is
+resolved in the same manner as type_name.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>default_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>For numeric types, contains the original text representation of the value.
+For booleans, "true" or "false".
+For strings, contains the default text contents (not escaped in any way).
+For bytes, contains the C escaped value.  All bytes >= 128 are escaped.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>oneof_index</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>int32</code><br/><br/>If set, gives the index of a oneof in the containing type's oneof_decl
+list.  This field is a member of that oneof.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>json_name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>JSON name of this field. The value is set by protocol compiler. If the
+user has set a "json_name" option on this field, that option's value
+will be used. Otherwise, it's deduced from the field's name by converting
+it to camelCase.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FieldOptions</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>proto3_optional</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>If true, this is a proto3 "optional". When a proto3 field is optional, it
+tracks presence regardless of field type.
+
+When proto3_optional is true, this field must belong to a oneof to signal
+to old proto3 clients that presence is tracked for this field. This oneof
+is known as a "synthetic" oneof, and this field must be its sole member
+(each proto3 optional field gets its own synthetic oneof). Synthetic oneofs
+exist in the descriptor only, and do not generate any API. Synthetic oneofs
+must be ordered after all "real" oneofs.
+
+For message fields, proto3_optional doesn't create any semantic change,
+since non-repeated message fields always track presence. However it still
+indicates the semantic detail of whether the user wrote "optional" or not.
+This can be useful for round-tripping the .proto file. For consistency we
+give message fields a synthetic oneof also, even though it is not required
+to track presence. This is especially important because the parser can't
+tell if a field is a message or an enum, so it must always create a
+synthetic oneof.
+
+Proto2 optional fields do not set this flag, because they already indicate
+optional with `LABEL_OPTIONAL`.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### OneofDescriptorProto
+
+Describes a oneof.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>OneofOptions</code><br/><br/></td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### EnumDescriptorProto
+
+Describes an enum type.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>value</code></td>
+<td style={{padding:'8px 12px'}}><code>EnumValueDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>EnumOptions</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>reserved_range</code></td>
+<td style={{padding:'8px 12px'}}><code>EnumReservedRange[]</code><br/><br/>Range of reserved numeric values. Reserved numeric values may not be used
+by enum values in the same enum declaration. Reserved ranges may not
+overlap.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>reserved_name</code></td>
+<td style={{padding:'8px 12px'}}><code>string[]</code><br/><br/>Reserved enum value names, which may not be reused. A given name may only
+be reserved once.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>visibility</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>SymbolVisibility</code><br/><br/>Support for `export` and `local` keywords on enums.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### EnumValueDescriptorProto
+
+Describes a value within an enum.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>number</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>int32</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>EnumValueOptions</code><br/><br/></td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### ServiceDescriptorProto
+
+Describes a service.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>method</code></td>
+<td style={{padding:'8px 12px'}}><code>MethodDescriptorProto[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>ServiceOptions</code><br/><br/></td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### MethodDescriptorProto
+
+Describes a method of a service.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>input_type</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Input and output type names.  These are resolved in the same way as
+FieldDescriptorProto.type_name, but must refer to a message type.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>output_type</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>options</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>MethodOptions</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>client_streaming</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Identifies if client streams multiple client messages</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>server_streaming</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Identifies if server streams multiple server messages</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### FileOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>java_package</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Sets the Java package where classes generated from this .proto will be
+placed.  By default, the proto package is used, but this is often
+inappropriate because proto packages do not normally start with backwards
+domain names.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>java_outer_classname</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Controls the name of the wrapper Java class generated for the .proto file.
+That class will always contain the .proto file's getDescriptor() method as
+well as any top-level extensions defined in the .proto file.
+If java_multiple_files is disabled, then all the other classes from the
+.proto file will be nested inside the single wrapper outer class.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>java_multiple_files</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>If enabled, then the Java code generator will generate a separate .java
+file for each top-level message, enum, and service defined in the .proto
+file.  Thus, these types will *not* be nested inside the wrapper class
+named by java_outer_classname.  However, the wrapper class will still be
+generated to contain the file's getDescriptor() method as well as any
+top-level extensions defined in the file.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>java_generate_equals_and_hash</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>This option does nothing.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>java_string_check_utf8</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>A proto2 file can set this to true to opt in to UTF-8 checking for Java,
+which will throw an exception if invalid UTF-8 is parsed from the wire or
+assigned to a string field.
+
+TODO: clarify exactly what kinds of field types this option
+applies to, and update these docs accordingly.
+
+Proto3 files already perform these checks. Setting the option explicitly to
+false has no effect: it cannot be used to opt proto3 files out of UTF-8
+checks.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>optimize_for</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>OptimizeMode</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>go_package</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Sets the Go package where structs generated from this .proto will be
+placed. If omitted, the Go package will be derived from the following:
+  - The basename of the package import path, if provided.
+  - Otherwise, the package statement in the .proto file, if present.
+  - Otherwise, the basename of the .proto file, without extension.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>cc_generic_services</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Should generic services be generated in each language?  "Generic" services
+are not specific to any particular RPC system.  They are generated by the
+main code generators in each language (without additional plugins).
+Generic services were the only kind of service generation supported by
+early versions of google.protobuf.
+
+Generic services are now considered deprecated in favor of using plugins
+that generate code specific to your particular RPC system.  Therefore,
+these default to false.  Old code which depends on generic services should
+explicitly set them to true.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>java_generic_services</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>py_generic_services</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this file deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for everything in the file, or it will be completely ignored; in the very
+least, this is a formalization for deprecating files.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>cc_enable_arenas</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Enables the use of arenas for the proto messages in this file. This applies
+only to generated classes for C++.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>objc_class_prefix</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Sets the objective c class prefix which is prepended to all objective c
+generated classes from this .proto. There is no default.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>csharp_namespace</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Namespace for generated classes; defaults to the package.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>swift_prefix</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>By default Swift generators will take the proto package and CamelCase it
+replacing '.' with underscore and use that to prefix the types/symbols
+defined. When this options is provided, they will use this value instead
+to prefix the types/symbols defined.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>php_class_prefix</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Sets the php class prefix which is prepended to all php generated classes
+from this .proto. Default is empty.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>php_namespace</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Use this option to change the namespace of php generated classes. Default
+is empty. When this option is empty, the package name will be used for
+determining the namespace.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>php_metadata_namespace</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Use this option to change the namespace of php generated metadata classes.
+Default is empty. When this option is empty, the proto file name will be
+used for determining the namespace.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>ruby_package</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>Use this option to change the package of ruby generated classes. Default
+is empty. When this option is not set, the package name will be used for
+determining the ruby package.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here.
+See the documentation for the "Options" section above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### MessageOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>message_set_wire_format</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Set true to use the old proto1 MessageSet wire format for extensions.
+This is provided for backwards-compatibility with the MessageSet wire
+format.  You should not use this for any other reason:  It's less
+efficient, has fewer features, and is more complicated.
+
+The message must be defined exactly as follows:
+  message Foo {
+    option message_set_wire_format = true;
+    extensions 4 to max;
+  }
+Note that the message cannot have any defined fields; MessageSets only
+have extensions.
+
+All extensions of your type must be singular messages; e.g. they cannot
+be int32s, enums, or repeated messages.
+
+Because this is an option, the above two restrictions are not enforced by
+the protocol compiler.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>no_standard_descriptor_accessor</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Disables the generation of the standard "descriptor()" accessor, which can
+conflict with a field of the same name.  This is meant to make migration
+from proto1 easier; new code should avoid fields named "descriptor".</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this message deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for the message, or it will be completely ignored; in the very least,
+this is a formalization for deprecating messages.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>map_entry</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Whether the message is an automatically generated map entry type for the
+maps field.
+
+For maps fields:
+    map<KeyType, ValueType> map_field = 1;
+The parsed descriptor looks like:
+    message MapFieldEntry {
+        option map_entry = true;
+        optional KeyType key = 1;
+        optional ValueType value = 2;
+    }
+    repeated MapFieldEntry map_field = 1;
+
+Implementations may choose not to generate the map_entry=true message, but
+use a native map in the target language to hold the keys and values.
+The reflection APIs in such implementations still need to work as
+if the field is a repeated message field.
+
+NOTE: Do not set the option in .proto files. Always use the maps syntax
+instead. The option should only be implicitly set by the proto compiler
+parser.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated_legacy_json_field_conflicts</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Enable the legacy handling of JSON field name conflicts.  This lowercases
+and strips underscored from the fields before comparison in proto3 only.
+The new behavior takes `json_name` into account and applies to proto2 as
+well.
+
+This should only be used as a temporary measure against broken builds due
+to the change in behavior for JSON field name conflicts.
+
+TODO This is legacy behavior we plan to remove once downstream
+teams have had time to migrate.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### FieldOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>ctype</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>CType</code><br/><br/>NOTE: ctype is deprecated. Use `features.(pb.cpp).string_type` instead.
+The ctype option instructs the C++ code generator to use a different
+representation of the field than it normally would.  See the specific
+options below.  This option is only implemented to support use of
+[ctype=CORD] and [ctype=STRING] (the default) on non-repeated fields of
+type "bytes" in the open source release.
+TODO: make ctype actually deprecated.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>packed</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>The packed option can be enabled for repeated primitive fields to enable
+a more efficient representation on the wire. Rather than repeatedly
+writing the tag and type for each element, the entire array is encoded as
+a single length-delimited blob. In proto3, only explicit setting it to
+false will avoid using packed encoding.  This option is prohibited in
+Editions, but the `repeated_field_encoding` feature can be used to control
+the behavior.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>jstype</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>JSType</code><br/><br/>The jstype option determines the JavaScript type used for values of the
+field.  The option is permitted only for 64 bit integral and fixed types
+(int64, uint64, sint64, fixed64, sfixed64).  A field with jstype JS_STRING
+is represented as JavaScript string, which avoids loss of precision that
+can happen when a large value is converted to a floating point JavaScript.
+Specifying JS_NUMBER for the jstype causes the generated JavaScript code to
+use the JavaScript "number" type.  The behavior of the default option
+JS_NORMAL is implementation dependent.
+
+This option is an enum to permit additional types to be added, e.g.
+goog.math.Integer.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>lazy</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Should this field be parsed lazily?  Lazy applies only to message-type
+fields.  It means that when the outer message is initially parsed, the
+inner message's contents will not be parsed but instead stored in encoded
+form.  The inner message will actually be parsed when it is first accessed.
+
+This is only a hint.  Implementations are free to choose whether to use
+eager or lazy parsing regardless of the value of this option.  However,
+setting this option true suggests that the protocol author believes that
+using lazy parsing on this field is worth the additional bookkeeping
+overhead typically needed to implement it.
+
+This option does not affect the public interface of any generated code;
+all method signatures remain the same.  Furthermore, thread-safety of the
+interface is not affected by this option; const methods remain safe to
+call from multiple threads concurrently, while non-const methods continue
+to require exclusive access.
+
+Note that lazy message fields are still eagerly verified to check
+ill-formed wireformat or missing required fields. Calling IsInitialized()
+on the outer message would fail if the inner message has missing required
+fields. Failed verification would result in parsing failure (except when
+uninitialized messages are acceptable).</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>unverified_lazy</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>unverified_lazy does no correctness checks on the byte stream. This should
+only be used where lazy with verification is prohibitive for performance
+reasons.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this field deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for accessors, or it will be completely ignored; in the very least, this
+is a formalization for deprecating fields.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>weak</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>DEPRECATED. DO NOT USE!
+For Google-internal migration only. Do not use.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>debug_redact</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Indicate that the field value should not be printed out when using debug
+formats, e.g. when the field contains sensitive credentials.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>retention</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>OptionRetention</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>targets</code></td>
+<td style={{padding:'8px 12px'}}><code>OptionTargetType[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>edition_defaults</code></td>
+<td style={{padding:'8px 12px'}}><code>EditionDefault[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>feature_support</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSupport</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### OneofOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### EnumOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>allow_alias</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Set this option to true to allow mapping different tag names to the same
+value.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this enum deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for the enum, or it will be completely ignored; in the very least, this
+is a formalization for deprecating enums.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated_legacy_json_field_conflicts</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Enable the legacy handling of JSON field name conflicts.  This lowercases
+and strips underscored from the fields before comparison in proto3 only.
+The new behavior takes `json_name` into account and applies to proto2 as
+well.
+TODO Remove this legacy behavior once downstream teams have
+had time to migrate.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### EnumValueOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this enum value deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for the enum value, or it will be completely ignored; in the very least,
+this is a formalization for deprecating enum values.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>debug_redact</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Indicate that fields annotated with this enum value should not be printed
+out when using debug formats, e.g. when the field contains sensitive
+credentials.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>feature_support</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSupport</code><br/><br/>Information about the support window of a feature value.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### ServiceOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this service deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for the service, or it will be completely ignored; in the very least,
+this is a formalization for deprecating services.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### MethodOptions
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>deprecated</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bool</code><br/><br/>Is this method deprecated?
+Depending on the target platform, this can emit Deprecated annotations
+for the method, or it will be completely ignored; in the very least,
+this is a formalization for deprecating methods.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>idempotency_level</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>IdempotencyLevel</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>features</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FeatureSet</code><br/><br/>Any features defined in the specific edition.
+WARNING: This field should only be used by protobuf plugins or special
+cases like the proto compiler. Other uses are discouraged and
+developers should rely on the protoreflect APIs for their client language.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>uninterpreted_option</code></td>
+<td style={{padding:'8px 12px'}}><code>UninterpretedOption[]</code><br/><br/>The parser stores options it doesn't recognize here. See above.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UninterpretedOption
+
+A message representing a option the parser does not recognize. This only
+appears in options protos created by the compiler::Parser class.
+DescriptorPool resolves these when building Descriptor objects. Therefore,
+options protos in descriptor objects (e.g. returned by Descriptor::options(),
+or produced by Descriptor::CopyTo()) will never have UninterpretedOptions
+in them.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>name</code></td>
+<td style={{padding:'8px 12px'}}><code>NamePart[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>identifier_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/>The value of the uninterpreted option, in whatever type the tokenizer
+identified it as during parsing. Exactly one of these should be set.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>positive_int_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>uint64</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>negative_int_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>int64</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>double_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>double</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>string_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>bytes</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>aggregate_value</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>string</code><br/><br/></td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### FeatureSet
+
+TODO Enums in C++ gencode (and potentially other languages) are
+not well scoped.  This means that each of the feature enums below can clash
+with each other.  The short names we've chosen maximize call-site
+readability, but leave us very open to this scenario.  A future feature will
+be designed and implemented to handle this, hopefully before we ever hit a
+conflict here.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>field_presence</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>FieldPresence</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>enum_type</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>EnumType</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>repeated_field_encoding</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>RepeatedFieldEncoding</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>utf8_validation</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>Utf8Validation</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>message_encoding</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>MessageEncoding</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>json_format</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>JsonFormat</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>enforce_naming_style</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>EnforceNamingStyle</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>default_symbol_visibility</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>DefaultSymbolVisibility</code><br/><br/></td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### FeatureSetDefaults
+
+A compiled specification for the defaults of a set of features.  These
+messages are generated from FeatureSet extensions and can be used to seed
+feature resolution. The resolution with this object becomes a simple search
+for the closest matching edition, followed by proto merges.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>defaults</code></td>
+<td style={{padding:'8px 12px'}}><code>FeatureSetEditionDefault[]</code><br/><br/></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>minimum_edition</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>Edition</code><br/><br/>The minimum supported edition (inclusive) when this was constructed.
+Editions before this will not have defaults.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>maximum_edition</code></td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <code>Edition</code><br/><br/>The maximum known edition (inclusive) when this was constructed. Editions
+after this will not have reliable defaults.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SourceCodeInfo
+
+Encapsulates information about the original source file from which a
+FileDescriptorProto was generated.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>location</code></td>
+<td style={{padding:'8px 12px'}}><code>Location[]</code><br/><br/>A Location identifies a piece of source code in a .proto file which
+corresponds to a particular definition.  This information is intended
+to be useful to IDEs, code indexers, documentation generators, and similar
+tools.
+
+For example, say we have a file like:
+  message Foo {
+    optional string foo = 1;
+  }
+Let's look at just the field definition:
+  optional string foo = 1;
+  ^       ^^     ^^  ^  ^^^
+  a       bc     de  f  ghi
+We have the following locations:
+  span   path               represents
+  [a,i)  [ 4, 0, 2, 0 ]     The whole field definition.
+  [a,b)  [ 4, 0, 2, 0, 4 ]  The label (optional).
+  [c,d)  [ 4, 0, 2, 0, 5 ]  The type (string).
+  [e,f)  [ 4, 0, 2, 0, 1 ]  The name (foo).
+  [g,h)  [ 4, 0, 2, 0, 3 ]  The number (1).
+
+Notes:
+- A location may refer to a repeated field itself (i.e. not to any
+  particular index within it).  This is used whenever a set of elements are
+  logically enclosed in a single code segment.  For example, an entire
+  extend block (possibly containing multiple extension definitions) will
+  have an outer location whose path refers to the "extensions" repeated
+  field without an index.
+- Multiple locations may have the same path.  This happens when a single
+  logical declaration is spread out across multiple places.  The most
+  obvious example is the "extend" block again -- there may be multiple
+  extend blocks in the same scope, each of which will have the same path.
+- A location's span is not always a subset of its parent's span.  For
+  example, the "extendee" of an extension declaration appears at the
+  beginning of the "extend" block and is shared by all extensions within
+  the block.
+- Just because a location's span is a subset of some other location's span
+  does not mean that it is a descendant.  For example, a "group" defines
+  both a type and a field in a single declaration.  Thus, the locations
+  corresponding to the type and field and their components will overlap.
+- Code which tries to interpret locations should probably be designed to
+  ignore those that it doesn't understand, as more types of locations could
+  be recorded in the future.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### GeneratedCodeInfo
+
+Describes the relationship between generated code and its original source
+file. A GeneratedCodeInfo message is associated with only one generated
+source file, but may contain references to different source .proto files.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Name</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}></th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>annotation</code></td>
+<td style={{padding:'8px 12px'}}><code>Annotation[]</code><br/><br/>An Annotation connects some span of text in generated code to an element
+of its generating .proto file.</td>
+</tr>
+</tbody>
+</table>
+
+
+---
+
+### Edition
+
+The full set of known editions.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Value</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}>Description</th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_UNKNOWN</code></td>
+<td style={{padding:'8px 12px'}}>A placeholder for an unknown edition value.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_LEGACY</code></td>
+<td style={{padding:'8px 12px'}}>A placeholder edition for specifying default behaviors *before* a feature
+was first introduced.  This is effectively an "infinite past".</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_PROTO2</code></td>
+<td style={{padding:'8px 12px'}}>Legacy syntax "editions".  These pre-date editions, but behave much like
+distinct editions.  These can't be used to specify the edition of proto
+files, but feature definitions must supply proto2/proto3 defaults for
+backwards compatibility.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_PROTO3</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_2023</code></td>
+<td style={{padding:'8px 12px'}}>Editions that have been released.  The specific values are arbitrary and
+should not be depended on, but they will always be time-ordered for easy
+comparison.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_2024</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_UNSTABLE</code></td>
+<td style={{padding:'8px 12px'}}>A placeholder edition for developing and testing unscheduled features.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_1_TEST_ONLY</code></td>
+<td style={{padding:'8px 12px'}}>Placeholder editions for testing feature resolution.  These should not be
+used or relied on outside of tests.</td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_2_TEST_ONLY</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_99997_TEST_ONLY</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_99998_TEST_ONLY</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_99999_TEST_ONLY</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>EDITION_MAX</code></td>
+<td style={{padding:'8px 12px'}}>Placeholder for specifying unbounded edition support.  This should only
+ever be used by plugins that can expect to never require any changes to
+support a new edition.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SymbolVisibility
+
+Describes the 'visibility' of a symbol with respect to the proto import
+system. Symbols can only be imported when the visibility rules do not prevent
+it (ex: local symbols cannot be imported).  Visibility modifiers can only set
+on `message` and `enum` as they are the only types available to be referenced
+from other files.
+
+<table style={{width:'100%',borderCollapse:'collapse'}}>
+<thead><tr style={{borderBottom:'2px solid rgba(125,125,125,0.3)'}}>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600,width:'30%'}}>Value</th>
+<th style={{textAlign:'left',padding:'8px 12px',fontWeight:600}}>Description</th>
+</tr></thead>
+<tbody>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>VISIBILITY_UNSET</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>VISIBILITY_LOCAL</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+<tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
+<td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>VISIBILITY_EXPORT</code></td>
+<td style={{padding:'8px 12px'}}></td>
+</tr>
+</tbody>
+</table>
+
+
