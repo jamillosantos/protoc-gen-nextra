@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package nextra;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/nextra";
+
+extend google.protobuf.ServiceOptions {
+  // server_addr overrides the default gRPC server address used in the
+  // generated usage examples for this specific service.
+  string server_addr = 50051;
+}
+
+// ErrorDetailField is a free-form field annotation for an error detail type.
+message ErrorDetailField {
+  string name  = 1;
+  string value = 2;
+}
+
+// ErrorDef documents a single error a method may return.
+message ErrorDef {
+  // code is the gRPC status code name, e.g. "NOT_FOUND".
+  string code = 1;
+
+  // description is a human-readable explanation of when this error occurs.
+  string description = 2;
+
+  // detail_type is the fully-qualified proto message name used as the error
+  // detail, e.g. "google.rpc.BadRequest" or "myapp.ValidationError".
+  string detail_type = 3;
+
+  // fields provides free-form field annotations for the detail type.
+  repeated ErrorDetailField fields = 4;
+}
+
+// MethodErrors lists the errors a method may return.
+message MethodErrors {
+  repeated ErrorDef errors = 1;
+}
+
+extend google.protobuf.MethodOptions {
+  // method_errors documents the errors a method may return.
+  MethodErrors method_errors = 50052;
+}

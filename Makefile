@@ -1,4 +1,4 @@
-.PHONY: build install testdata generate test update-golden lint clean
+.PHONY: build install testdata generate test update-golden lint clean options
 
 BINARY := protoc-gen-nextra
 
@@ -22,6 +22,7 @@ testdata/all.pb: $(PROTO_FILES)
 		--include_source_info \
 		--include_imports \
 		-I testdata/proto \
+		-I . \
 		$(PROTO_FILES)
 
 testdata: testdata/all.pb
@@ -33,6 +34,7 @@ generate: build testdata/all.pb
 		--plugin=protoc-gen-nextra=bin/$(BINARY) \
 		--nextra_out=testdata/content \
 		-I testdata/proto \
+		-I . \
 		$(PROTO_FILES)
 
 test: generate
@@ -41,6 +43,13 @@ test: generate
 # Re-generate golden files from current output.
 update-golden: testdata/all.pb
 	UPDATE_GOLDEN=1 go test ./...
+
+# Regenerate nextra/options.pb.go from nextra/options.proto.
+# Requires: protoc, protoc-gen-go (go install google.golang.org/protobuf/cmd/protoc-gen-go@latest)
+options:
+	protoc --go_out=. --go_opt=module=github.com/jamillosantos/protoc-gen-nextra \
+		-I . -I $(dir $(shell which protoc))../include \
+		nextra/options.proto
 
 lint:
 	golangci-lint run ./...
