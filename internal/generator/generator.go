@@ -63,7 +63,7 @@ func buildTypeIndex(files []*protogen.File) (map[string]string, map[string]*prot
 // generateCombined writes one MDX file containing all services in the proto file.
 func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	// Output path: <proto_directory>.mdx (e.g. greeter/v1/greeter.proto → greeter/v1.mdx)
-	outPath := filepath.Dir(f.Desc.Path()) + ".mdx"
+	outPath := filepath.Dir(f.Desc.Path()) + ".gen.mdx"
 	return renderPage(gen, f, outPath, buildPackageData(f, outPath, cfg))
 }
 
@@ -71,7 +71,7 @@ func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error 
 func generateSplit(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	dir := filepath.Dir(f.Desc.Path())
 	for _, svc := range f.Services {
-		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".mdx")
+		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".gen.mdx")
 		data := buildSingleServiceData(f, svc, outPath, cfg)
 		if err := renderPage(gen, f, outPath, data); err != nil {
 			return err
@@ -95,7 +95,6 @@ type PackageData struct {
 	Title               string
 	PackageName         string
 	ShowServiceHeadings bool
-	HasUsageExamples    bool // true if any unary method has generated examples
 	Services            []ServiceData
 	Messages            []MessageData
 	Enums               []EnumData
@@ -139,8 +138,6 @@ type MethodData struct {
 	RequestFields   []FieldData
 	ResponseFields  []FieldData
 	Errors          []ErrorData
-	GrpcurlExample  string // non-empty for unary methods only
-	GoExample       string // non-empty for unary methods only
 }
 
 // ErrorData holds template data for a single documented error.
@@ -225,7 +222,7 @@ type PreviewItem struct {
 
 func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData {
 	data := PackageData{
-		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".gen.mdx")),
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: len(f.Services) > 1,
 	}
@@ -247,13 +244,6 @@ func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData 
 			Fields:      buildFields(msg, cfg),
 		})
 	}
-	for _, svc := range data.Services {
-		for _, m := range svc.Methods {
-			if m.GrpcurlExample != "" {
-				data.HasUsageExamples = true
-			}
-		}
-	}
 	for _, enum := range f.Enums {
 		ed := EnumData{
 			Name:        string(enum.Desc.Name()),
@@ -271,20 +261,11 @@ func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData 
 }
 
 func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string, cfg Config) PackageData {
-	sd := buildServiceData(f, svc, cfg)
-	hasExamples := false
-	for _, m := range sd.Methods {
-		if m.GrpcurlExample != "" {
-			hasExamples = true
-			break
-		}
-	}
 	return PackageData{
-		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".gen.mdx")),
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: false,
-		HasUsageExamples:    hasExamples,
-		Services:            []ServiceData{sd},
+		Services:            []ServiceData{buildServiceData(f, svc, cfg)},
 	}
 }
 
@@ -293,15 +274,6 @@ func buildServiceData(f *protogen.File, svc *protogen.Service, cfg Config) Servi
 		ServiceName: string(svc.Desc.Name()),
 		Description: commentString(svc.Comments),
 	}
-	// Resolve server address: service option takes priority over plugin-level config.
-	svcServerAddr := cfg.ServerAddr
-	if opts := svc.Desc.Options(); opts != nil && proto.HasExtension(opts, nextraopt.E_ServerAddr) {
-		if v, ok := proto.GetExtension(opts, nextraopt.E_ServerAddr).(string); ok && v != "" {
-			svcServerAddr = v
-		}
-	}
-
-	pkg := string(f.Desc.Package())
 	for _, m := range svc.Methods {
 		md := MethodData{
 			Name:            string(m.Desc.Name()),
@@ -338,12 +310,6 @@ func buildServiceData(f *protogen.File, svc *protogen.Service, cfg Config) Servi
 			}
 		}
 
-		if cfg.Examples && !m.Desc.IsStreamingClient() && !m.Desc.IsStreamingServer() {
-			cfgWithAddr := cfg
-			cfgWithAddr.ServerAddr = svcServerAddr
-			md.GrpcurlExample = buildGrpcurlExample(pkg, string(svc.Desc.Name()), string(m.Desc.Name()), m, cfgWithAddr.ServerAddr)
-			md.GoExample = buildGoExample(f, svc, m, cfgWithAddr)
-		}
 		sd.Methods = append(sd.Methods, md)
 	}
 	return sd

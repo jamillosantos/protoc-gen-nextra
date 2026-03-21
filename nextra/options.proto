@@ -6,12 +6,6 @@ import "google/protobuf/descriptor.proto";
 
 option go_package = "github.com/jamillosantos/protoc-gen-nextra/nextra";
 
-extend google.protobuf.ServiceOptions {
-  // server_addr overrides the default gRPC server address used in the
-  // generated usage examples for this specific service.
-  string server_addr = 50051;
-}
-
 // ErrorDetailField is a free-form field annotation for an error detail type.
 message ErrorDetailField {
   string name  = 1;

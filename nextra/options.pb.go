@@ -196,14 +196,6 @@ func (x *MethodErrors) GetErrors() []*ErrorDef {
 
 var file_nextra_options_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
-		ExtendedType:  (*descriptorpb.ServiceOptions)(nil),
-		ExtensionType: (*string)(nil),
-		Field:         50051,
-		Name:          "nextra.server_addr",
-		Tag:           "bytes,50051,opt,name=server_addr",
-		Filename:      "nextra/options.proto",
-	},
-	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*MethodErrors)(nil),
 		Field:         50052,
@@ -213,21 +205,12 @@ var file_nextra_options_proto_extTypes = []protoimpl.ExtensionInfo{
 	},
 }
 
-// Extension fields to descriptorpb.ServiceOptions.
-var (
-	// server_addr overrides the default gRPC server address used in the
-	// generated usage examples for this specific service.
-	//
-	// optional string server_addr = 50051;
-	E_ServerAddr = &file_nextra_options_proto_extTypes[0]
-)
-
 // Extension fields to descriptorpb.MethodOptions.
 var (
 	// method_errors documents the errors a method may return.
 	//
 	// optional nextra.MethodErrors method_errors = 50052;
-	E_MethodErrors = &file_nextra_options_proto_extTypes[1]
+	E_MethodErrors = &file_nextra_options_proto_extTypes[0]
 )
 
 var File_nextra_options_proto protoreflect.FileDescriptor
@@ -245,9 +228,7 @@ const file_nextra_options_proto_rawDesc = "" +
 	"detailType\x120\n" +
 	"\x06fields\x18\x04 \x03(\v2\x18.nextra.ErrorDetailFieldR\x06fields\"8\n" +
 	"\fMethodErrors\x12(\n" +
-	"\x06errors\x18\x01 \x03(\v2\x10.nextra.ErrorDefR\x06errors:B\n" +
-	"\vserver_addr\x12\x1f.google.protobuf.ServiceOptions\x18\x83\x87\x03 \x01(\tR\n" +
-	"serverAddr:[\n" +
+	"\x06errors\x18\x01 \x03(\v2\x10.nextra.ErrorDefR\x06errors:[\n" +
 	"\rmethod_errors\x12\x1e.google.protobuf.MethodOptions\x18\x84\x87\x03 \x01(\v2\x14.nextra.MethodErrorsR\fmethodErrorsB3Z1github.com/jamillosantos/protoc-gen-nextra/nextrab\x06proto3"
 
 var (
@@ -264,22 +245,20 @@ func file_nextra_options_proto_rawDescGZIP() []byte {
 
 var file_nextra_options_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_nextra_options_proto_goTypes = []any{
-	(*ErrorDetailField)(nil),            // 0: nextra.ErrorDetailField
-	(*ErrorDef)(nil),                    // 1: nextra.ErrorDef
-	(*MethodErrors)(nil),                // 2: nextra.MethodErrors
-	(*descriptorpb.ServiceOptions)(nil), // 3: google.protobuf.ServiceOptions
-	(*descriptorpb.MethodOptions)(nil),  // 4: google.protobuf.MethodOptions
+	(*ErrorDetailField)(nil),           // 0: nextra.ErrorDetailField
+	(*ErrorDef)(nil),                   // 1: nextra.ErrorDef
+	(*MethodErrors)(nil),               // 2: nextra.MethodErrors
+	(*descriptorpb.MethodOptions)(nil), // 3: google.protobuf.MethodOptions
 }
 var file_nextra_options_proto_depIdxs = []int32{
 	0, // 0: nextra.ErrorDef.fields:type_name -> nextra.ErrorDetailField
 	1, // 1: nextra.MethodErrors.errors:type_name -> nextra.ErrorDef
-	3, // 2: nextra.server_addr:extendee -> google.protobuf.ServiceOptions
-	4, // 3: nextra.method_errors:extendee -> google.protobuf.MethodOptions
-	2, // 4: nextra.method_errors:type_name -> nextra.MethodErrors
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	4, // [4:5] is the sub-list for extension type_name
-	2, // [2:4] is the sub-list for extension extendee
+	3, // 2: nextra.method_errors:extendee -> google.protobuf.MethodOptions
+	2, // 3: nextra.method_errors:type_name -> nextra.MethodErrors
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	3, // [3:4] is the sub-list for extension type_name
+	2, // [2:3] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
 }
 
@@ -295,7 +274,7 @@ func file_nextra_options_proto_init() {
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_nextra_options_proto_rawDesc), len(file_nextra_options_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   3,
-			NumExtensions: 2,
+			NumExtensions: 1,
 			NumServices:   0,
 		},
 		GoTypes:           file_nextra_options_proto_goTypes,
