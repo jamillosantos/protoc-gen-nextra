@@ -50,15 +50,15 @@ protoc \
   ./proto/**/*.proto
 ```
 
-`--nextra_out` should point to the `content/` directory of your Nextra project. The plugin mirrors the proto package path as subdirectories, placing one `.mdx` file per service.
+`--nextra_out` should point to the `content/` directory of your Nextra project. The plugin produces one `.mdx` file per proto directory, named after the directory (e.g. `greeter/v1/greeter.proto` → `greeter/v1.mdx`).
 
 ### Example
 
-Given this proto:
+Given this proto at `greeter/v1/greeter.proto`:
 
 ```proto
 syntax = "proto3";
-package helloworld;
+package greeter.v1;
 
 // Greeter provides greeting functionality.
 service Greeter {
@@ -70,11 +70,39 @@ service Greeter {
 }
 ```
 
-The plugin generates `helloworld/greeter.mdx` with:
+The plugin generates `greeter/v1.mdx` with:
 
 - A `UNARY` badge for `SayHello`
 - A `SERVER STREAM` badge for `SayHelloStream`
 - Tabbed request/response field tables for each method
+
+## Options
+
+Options are passed via `--nextra_opt` (protoc) or the `opt` key (buf).
+
+| Option | Default | Description |
+|---|---|---|
+| `split_services` | `false` | Generate one page per service instead of one page per proto file. Each service is written to `<proto_dir>/<service-name>.mdx`. |
+
+### With Buf
+
+```yaml
+version: v2
+plugins:
+  - local: protoc-gen-nextra
+    out: docs/content
+    opt: split_services=true
+```
+
+### With protoc
+
+```sh
+protoc \
+  --nextra_opt=split_services=true \
+  --nextra_out=./docs/content \
+  -I ./proto \
+  ./proto/**/*.proto
+```
 
 ## Nextra setup
 
