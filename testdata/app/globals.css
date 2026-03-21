@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-.nextra-sidebar {
+.nextra-toc {
   display: none !important;
 }
 
