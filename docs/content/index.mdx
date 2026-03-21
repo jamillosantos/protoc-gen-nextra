@@ -1,0 +1,37 @@
+# protoc-gen-nextra
+
+A `protoc` plugin that generates [Nextra](https://nextra.site) MDX documentation pages from gRPC `.proto` files.
+
+## What it does
+
+`protoc-gen-nextra` reads your `.proto` files and writes `.mdx` files into a directory of your choice — one file per proto package.
+
+Each generated page includes:
+
+- **RPC type badges** — `UNARY`, `SERVER STREAM`, `CLIENT STREAM`, `BIDI STREAM`
+- **Request/response field tables** with types, `optional`/`repeated` pills, and inline doc comments from your proto
+- **Cross-package type links** — fields referencing types from other packages link to their page and show a hover preview card
+- **Error documentation** — per-method error codes with descriptions, detail types, and example JSON payloads
+- **Usage examples** — grpcurl and Go code tabs per unary method (opt-in)
+
+## What it does not do
+
+`protoc-gen-nextra` **does not** set up Nextra, create a Next.js project, or manage your documentation site. It only generates `.mdx` files.
+
+You are responsible for setting up your own Nextra project and pointing the plugin output at your `content/` directory.
+
+## About this site
+
+The pages in this documentation are generated from the example `.proto` files in the [`testdata/proto/`](https://github.com/jamillosantos/protoc-gen-nextra/tree/main/testdata/proto) directory of the repository. They serve as a live preview of what the plugin produces.
+
+The following options are enabled:
+
+| Option | Value |
+|---|---|
+| `type_previews` | `true` |
+
+The protos also use the custom annotations from `nextra/options.proto`:
+
+- **`(nextra.method_errors)`** — per-method error documentation with detail types and JSON examples
+
+Browse the sidebar to explore the generated output, or head to the [GitHub repository](https://github.com/jamillosantos/protoc-gen-nextra) to get started.

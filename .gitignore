@@ -38,7 +38,10 @@ bin/
 testdata/all.pb
 
 # Nextra / Next.js
-testdata/.next/
-testdata/out/
-testdata/node_modules/
-testdata/package-lock.json
+docs/.next/
+docs/out/
+docs/node_modules/
+docs/package-lock.json
+
+# Generated MDX files
+docs/content/**/*.gen.mdx

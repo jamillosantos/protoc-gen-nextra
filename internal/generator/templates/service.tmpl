@@ -1,8 +1,3 @@
-
-[[ if .HasUsageExamples -]]
-import { Tabs } from 'nextra/components'
-
-[[ end -]]
 # [[ .Title ]]
 [[ range .Services ]]
 [[ if $.ShowServiceHeadings ]]
@@ -20,8 +15,6 @@ import { Tabs } from 'nextra/components'
 [[ if .Description ]]
 [[ .Description ]]
 [[ end ]]
-<div style={{display:'flex',flexWrap:'wrap',gap:'2rem',alignItems:'start'}}>
-<div style={{flex:'1 1 400px',minWidth:0}}>
 
 #### Request: [[ .RequestType ]]
 
@@ -85,29 +78,6 @@ _No fields._
 [[ end ]]
 [[ end ]]
 [[ end ]]
-
-</div>
-[[ if .GrpcurlExample -]]
-<div style={{flex:'0 0 380px',minWidth:0,position:'sticky',top:'6rem'}}>
-
-<Tabs items={['grpcurl', 'Go']}>
-<Tabs.Tab>
-```bash
-[[ .GrpcurlExample ]]
-```
-</Tabs.Tab>
-<Tabs.Tab>
-
-```go
-[[ .GoExample ]]
-```
-
-</Tabs.Tab>
-</Tabs>
-
-</div>
-[[ end -]]
-</div>
 
 </div>
 [[ end ]]
