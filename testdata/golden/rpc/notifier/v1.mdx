@@ -24,7 +24,7 @@ Send delivers a notification to a recipient.
 <tbody>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>recipient</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#recipient" className="x-type-link"><code>shared.notifications.v1.Recipient</code></a><br/><br/>recipient is who the notification should be delivered to.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Recipient" href="/shared/notifications/v1#recipient" fields={[{"name":"user_id","type":"string"},{"name":"email","type":"string","optional":true},{"name":"phone","type":"string","optional":true}]}/><br/><br/>recipient is who the notification should be delivered to.</td>
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>subject</code></td>
@@ -36,7 +36,7 @@ Send delivers a notification to a recipient.
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>scheduled_at</code></td>
-<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>scheduled_at optionally schedules delivery for a future time.</td>
+<td style={{padding:'8px 12px'}}><span style={{fontSize:'0.75rem',background:'#059669',color:'white',padding:'2px 8px',borderRadius:'4px',marginRight:'0.5rem'}}>optional</span> <TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>scheduled_at optionally schedules delivery for a future time.</td>
 </tr>
 </tbody>
 </table>
@@ -56,11 +56,11 @@ Send delivers a notification to a recipient.
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>status</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#deliverystatus" className="x-type-link"><code>shared.notifications.v1.DeliveryStatus</code></a><br/><br/>status is the initial delivery status.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.DeliveryStatus" href="/shared/notifications/v1#deliverystatus" fields={[{"name":"DELIVERY_STATUS_UNSPECIFIED"},{"name":"PENDING"},{"name":"DELIVERED"},{"name":"FAILED"},{"name":"READ"}]}/><br/><br/>status is the initial delivery status.</td>
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>queued_at</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>queued_at is the time the notification was accepted.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>queued_at is the time the notification was accepted.</td>
 </tr>
 </tbody>
 </table>
@@ -114,11 +114,11 @@ Subscribe opens a live stream of incoming notifications for a user.
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>status</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#deliverystatus" className="x-type-link"><code>shared.notifications.v1.DeliveryStatus</code></a><br/><br/>status is the current delivery status.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.DeliveryStatus" href="/shared/notifications/v1#deliverystatus" fields={[{"name":"DELIVERY_STATUS_UNSPECIFIED"},{"name":"PENDING"},{"name":"DELIVERED"},{"name":"FAILED"},{"name":"READ"}]}/><br/><br/>status is the current delivery status.</td>
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>sent_at is when the notification was originally sent.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>sent_at is when the notification was originally sent.</td>
 </tr>
 </tbody>
 </table>
@@ -198,7 +198,7 @@ Chat opens a bidirectional stream for real-time messaging.
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>sent_at is when the message was sent.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>sent_at is when the message was sent.</td>
 </tr>
 </tbody>
 </table>
@@ -222,7 +222,7 @@ Chat opens a bidirectional stream for real-time messaging.
 </tr>
 <tr style={{borderBottom:'1px solid rgba(125,125,125,0.15)'}}>
 <td style={{padding:'8px 12px',verticalAlign:'top',whiteSpace:'nowrap'}}><code>sent_at</code></td>
-<td style={{padding:'8px 12px'}}><a href="/shared/notifications/v1#timestamp" className="x-type-link"><code>shared.notifications.v1.Timestamp</code></a><br/><br/>sent_at is when the message was sent.</td>
+<td style={{padding:'8px 12px'}}><TypePreview name="shared.notifications.v1.Timestamp" href="/shared/notifications/v1#timestamp" fields={[{"name":"seconds","type":"int64"},{"name":"nanos","type":"int32"}]}/><br/><br/>sent_at is when the message was sent.</td>
 </tr>
 </tbody>
 </table>

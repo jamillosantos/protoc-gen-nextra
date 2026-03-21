@@ -2,6 +2,7 @@ package generator
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -30,24 +31,24 @@ func GenerateFile(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	}
 
 	if cfg.SplitServices && len(f.Services) > 0 {
-		return generateSplit(gen, f)
+		return generateSplit(gen, f, cfg)
 	}
-	return generateCombined(gen, f)
+	return generateCombined(gen, f, cfg)
 }
 
 // generateCombined writes one MDX file containing all services in the proto file.
-func generateCombined(gen *protogen.Plugin, f *protogen.File) error {
+func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	// Output path: <proto_directory>.mdx (e.g. greeter/v1/greeter.proto → greeter/v1.mdx)
 	outPath := filepath.Dir(f.Desc.Path()) + ".mdx"
-	return renderPage(gen, f, outPath, buildPackageData(f, outPath))
+	return renderPage(gen, f, outPath, buildPackageData(f, outPath, cfg))
 }
 
 // generateSplit writes one MDX file per service inside <proto_directory>/<service>.mdx.
-func generateSplit(gen *protogen.Plugin, f *protogen.File) error {
+func generateSplit(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	dir := filepath.Dir(f.Desc.Path())
 	for _, svc := range f.Services {
 		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".mdx")
-		data := buildSingleServiceData(f, svc, outPath)
+		data := buildSingleServiceData(f, svc, outPath, cfg)
 		if err := renderPage(gen, f, outPath, data); err != nil {
 			return err
 		}
@@ -146,13 +147,34 @@ func (m MethodData) BadgeColor() string {
 type FieldData struct {
 	Name        string
 	Type        string
-	Link        string // non-empty when Type is defined in a different package
+	Link        string           // non-empty when Type is defined in a different package
+	Preview     *TypePreviewData // non-nil when Link is set and TypePreviews is enabled
 	Description string
 	Optional    bool
 	Repeated    bool
 }
 
-func buildPackageData(f *protogen.File, outPath string) PackageData {
+// TypePreviewData holds the summarised data shown in the hover preview card.
+type TypePreviewData struct {
+	Name  string
+	Items []PreviewItem
+}
+
+// ItemsJSON returns the Items slice serialised as a JSON array for use as a JSX prop.
+func (p *TypePreviewData) ItemsJSON() string {
+	b, _ := json.Marshal(p.Items)
+	return string(b)
+}
+
+// PreviewItem is a single row in the hover preview card.
+type PreviewItem struct {
+	Name     string `json:"name"`
+	Type     string `json:"type,omitempty"`
+	Optional bool   `json:"optional,omitempty"`
+	Repeated bool   `json:"repeated,omitempty"`
+}
+
+func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData {
 	data := PackageData{
 		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
 		PackageName:         string(f.Desc.Package()),
@@ -160,7 +182,7 @@ func buildPackageData(f *protogen.File, outPath string) PackageData {
 	}
 	inlined := make(map[string]bool)
 	for _, svc := range f.Services {
-		data.Services = append(data.Services, buildServiceData(svc))
+		data.Services = append(data.Services, buildServiceData(svc, cfg))
 		for _, m := range svc.Methods {
 			inlined[string(m.Input.Desc.Name())] = true
 			inlined[string(m.Output.Desc.Name())] = true
@@ -173,7 +195,7 @@ func buildPackageData(f *protogen.File, outPath string) PackageData {
 		data.Messages = append(data.Messages, MessageData{
 			Name:        string(msg.Desc.Name()),
 			Description: commentString(msg.Comments),
-			Fields:      buildFields(msg),
+			Fields:      buildFields(msg, cfg),
 		})
 	}
 	for _, enum := range f.Enums {
@@ -192,16 +214,16 @@ func buildPackageData(f *protogen.File, outPath string) PackageData {
 	return data
 }
 
-func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string) PackageData {
+func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string, cfg Config) PackageData {
 	return PackageData{
 		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: false,
-		Services:            []ServiceData{buildServiceData(svc)},
+		Services:            []ServiceData{buildServiceData(svc, cfg)},
 	}
 }
 
-func buildServiceData(svc *protogen.Service) ServiceData {
+func buildServiceData(svc *protogen.Service, cfg Config) ServiceData {
 	sd := ServiceData{
 		ServiceName: string(svc.Desc.Name()),
 		Description: commentString(svc.Comments),
@@ -214,14 +236,14 @@ func buildServiceData(svc *protogen.Service) ServiceData {
 			ResponseType:   string(m.Output.Desc.Name()),
 			ClientStreaming: m.Desc.IsStreamingClient(),
 			ServerStreaming: m.Desc.IsStreamingServer(),
-			RequestFields:  buildFields(m.Input),
-			ResponseFields: buildFields(m.Output),
+			RequestFields:  buildFields(m.Input, cfg),
+			ResponseFields: buildFields(m.Output, cfg),
 		})
 	}
 	return sd
 }
 
-func buildFields(msg *protogen.Message) []FieldData {
+func buildFields(msg *protogen.Message, cfg Config) []FieldData {
 	currentPkg := msg.Desc.ParentFile().Package()
 	var fields []FieldData
 	for _, f := range msg.Fields {
@@ -238,17 +260,44 @@ func buildFields(msg *protogen.Message) []FieldData {
 			if typePkg != currentPkg {
 				fd.Type = string(typePkg) + "." + string(f.Message.Desc.Name())
 				fd.Link = "/" + filepath.Dir(string(f.Message.Desc.ParentFile().Path())) + "#" + strings.ToLower(string(f.Message.Desc.Name()))
+				if cfg.TypePreviews {
+					fd.Preview = buildMessagePreview(fd.Type, f.Message)
+				}
 			}
 		case protoreflect.EnumKind:
 			typePkg := f.Enum.Desc.ParentFile().Package()
 			if typePkg != currentPkg {
 				fd.Type = string(typePkg) + "." + string(f.Enum.Desc.Name())
 				fd.Link = "/" + filepath.Dir(string(f.Enum.Desc.ParentFile().Path())) + "#" + strings.ToLower(string(f.Enum.Desc.Name()))
+				if cfg.TypePreviews {
+					fd.Preview = buildEnumPreview(fd.Type, f.Enum)
+				}
 			}
 		}
 		fields = append(fields, fd)
 	}
 	return fields
+}
+
+func buildMessagePreview(name string, msg *protogen.Message) *TypePreviewData {
+	p := &TypePreviewData{Name: name}
+	for _, f := range msg.Fields {
+		p.Items = append(p.Items, PreviewItem{
+			Name:     string(f.Desc.Name()),
+			Type:     fieldTypeName(f),
+			Optional: f.Desc.HasOptionalKeyword(),
+			Repeated: f.Desc.IsList(),
+		})
+	}
+	return p
+}
+
+func buildEnumPreview(name string, enum *protogen.Enum) *TypePreviewData {
+	p := &TypePreviewData{Name: name}
+	for _, v := range enum.Values {
+		p.Items = append(p.Items, PreviewItem{Name: string(v.Desc.Name())})
+	}
+	return p
 }
 
 func commentString(loc protogen.CommentSet) string {
