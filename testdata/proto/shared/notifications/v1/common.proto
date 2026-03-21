@@ -31,6 +31,15 @@ enum DeliveryStatus {
   READ = 4;
 }
 
+// ValidationFailure describes a single field-level validation error.
+message ValidationFailure {
+  // field is the dot-separated path of the field that failed validation.
+  string field = 1;
+
+  // reason is a human-readable explanation of the violated constraint.
+  string reason = 2;
+}
+
 // Recipient identifies who should receive a notification.
 message Recipient {
   // user_id is the internal identifier of the user.

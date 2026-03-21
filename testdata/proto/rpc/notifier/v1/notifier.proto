@@ -16,14 +16,10 @@ service NotificationService {
         {
           code: "INVALID_ARGUMENT",
           description: "one or more fields failed validation.",
-          detail_type: "google.rpc.BadRequest",
+          detail_type: "shared.notifications.v1.ValidationFailure",
           fields: [
-            { name: "field_violations[].field",       value: "recipient.email" },
-            { name: "field_violations[].description", value: "must be a valid email address." },
-            { name: "field_violations[].field",       value: "subject" },
-            { name: "field_violations[].description", value: "must not be empty." },
-            { name: "field_violations[].field",       value: "body" },
-            { name: "field_violations[].description", value: "must not exceed 10 000 characters." }
+            { name: "field", value: "recipient.email | subject | body" },
+            { name: "reason", value: "human-readable constraint violation" }
           ]
         },
         {
@@ -31,10 +27,10 @@ service NotificationService {
           description: "the caller has exceeded its notification quota.",
           detail_type: "google.rpc.QuotaFailure",
           fields: [
-            { name: "violations[].subject",     value: "notifications/day" },
-            { name: "violations[].description", value: "daily send limit reached." },
-            { name: "violations[].subject",     value: "notifications/second" },
-            { name: "violations[].description", value: "rate limit exceeded; back off and retry." }
+            { name: "violations[0].subject",     value: "notifications/day" },
+            { name: "violations[0].description", value: "daily send limit reached." },
+            { name: "violations[1].subject",     value: "notifications/second" },
+            { name: "violations[1].description", value: "rate limit exceeded; back off and retry." }
           ]
         },
         {
@@ -47,14 +43,18 @@ service NotificationService {
           ]
         },
         {
+          code: "NOT_FOUND",
+          description: "the recipient user does not exist."
+        },
+        {
           code: "FAILED_PRECONDITION",
           description: "the account is not in a state that allows sending.",
           detail_type: "google.rpc.PreconditionFailure",
           fields: [
-            { name: "violations[].type",        value: "ACCOUNT_SUSPENDED" },
-            { name: "violations[].description", value: "the sending account has been suspended." },
-            { name: "violations[].type",        value: "EMAIL_UNVERIFIED" },
-            { name: "violations[].description", value: "the sender email has not been verified." }
+            { name: "violations[0].type",        value: "ACCOUNT_SUSPENDED" },
+            { name: "violations[0].description", value: "the sending account has been suspended." },
+            { name: "violations[1].type",        value: "EMAIL_UNVERIFIED" },
+            { name: "violations[1].description", value: "the sender email has not been verified." }
           ]
         },
         {
@@ -79,13 +79,84 @@ service NotificationService {
   }
 
   // Subscribe opens a live stream of incoming notifications for a user.
-  rpc Subscribe (SubscribeRequest) returns (stream Notification);
+  rpc Subscribe (SubscribeRequest) returns (stream Notification) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "the user does not exist."
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        },
+        {
+          code: "UNAVAILABLE",
+          description: "the service is temporarily unavailable; retry after the indicated delay.",
+          detail_type: "google.rpc.RetryInfo",
+          fields: [
+            { name: "retry_delay", value: "5s" }
+          ]
+        }
+      ]
+    };
+  }
 
   // Acknowledge bulk-acknowledges a stream of notification IDs.
-  rpc Acknowledge (stream AcknowledgeRequest) returns (AcknowledgeResponse);
+  rpc Acknowledge (stream AcknowledgeRequest) returns (AcknowledgeResponse) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "one or more notification IDs do not exist."
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        }
+      ]
+    };
+  }
 
   // Chat opens a bidirectional stream for real-time messaging.
-  rpc Chat (stream ChatMessage) returns (stream ChatMessage);
+  rpc Chat (stream ChatMessage) returns (stream ChatMessage) {
+    option (nextra.method_errors) = {
+      errors: [
+        {
+          code: "NOT_FOUND",
+          description: "the target user for the chat session does not exist."
+        },
+        {
+          code: "UNAUTHENTICATED",
+          description: "the request could not be authenticated.",
+          detail_type: "google.rpc.ErrorInfo",
+          fields: [
+            { name: "reason", value: "INVALID_TOKEN" },
+            { name: "domain", value: "notifier.example.com" }
+          ]
+        },
+        {
+          code: "RESOURCE_EXHAUSTED",
+          description: "the caller has exceeded its concurrent stream limit.",
+          detail_type: "google.rpc.QuotaFailure",
+          fields: [
+            { name: "violations[0].subject",     value: "chat/concurrent_streams" },
+            { name: "violations[0].description", value: "maximum concurrent chat streams reached." }
+          ]
+        }
+      ]
+    };
+  }
 }
 
 // SendRequest is the request message for Send.

@@ -21,10 +21,10 @@ service Greeter {
           description: "input validation failed.",
           detail_type: "google.rpc.BadRequest",
           fields: [
-            { name: "field_violations[].field",       value: "name",     },
-            { name: "field_violations[].description", value: "must not be empty." },
-            { name: "field_violations[].field",       value: "language" },
-            { name: "field_violations[].description", value: "must be a valid BCP-47 language tag." }
+            { name: "field_violations[0].field",       value: "name" },
+            { name: "field_violations[0].description", value: "must not be empty." },
+            { name: "field_violations[1].field",       value: "language" },
+            { name: "field_violations[1].description", value: "must be a valid BCP-47 language tag." }
           ]
         }
       ]
