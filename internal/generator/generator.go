@@ -63,7 +63,7 @@ func buildTypeIndex(files []*protogen.File) (map[string]string, map[string]*prot
 // generateCombined writes one MDX file containing all services in the proto file.
 func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	// Output path: <proto_directory>.mdx (e.g. greeter/v1/greeter.proto → greeter/v1.mdx)
-	outPath := filepath.Dir(f.Desc.Path()) + ".gen.mdx"
+	outPath := filepath.Dir(f.Desc.Path()) + ".mdx"
 	return renderPage(gen, f, outPath, buildPackageData(f, outPath, cfg))
 }
 
@@ -71,7 +71,7 @@ func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error 
 func generateSplit(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
 	dir := filepath.Dir(f.Desc.Path())
 	for _, svc := range f.Services {
-		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".gen.mdx")
+		outPath := filepath.Join(dir, snakeit(string(svc.Desc.Name()))+".mdx")
 		data := buildSingleServiceData(f, svc, outPath, cfg)
 		if err := renderPage(gen, f, outPath, data); err != nil {
 			return err
@@ -222,7 +222,7 @@ type PreviewItem struct {
 
 func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData {
 	data := PackageData{
-		Title:               filepath.Base(strings.TrimSuffix(outPath, ".gen.mdx")),
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: len(f.Services) > 1,
 	}
@@ -262,7 +262,7 @@ func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData 
 
 func buildSingleServiceData(f *protogen.File, svc *protogen.Service, outPath string, cfg Config) PackageData {
 	return PackageData{
-		Title:               filepath.Base(strings.TrimSuffix(outPath, ".gen.mdx")),
+		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: false,
 		Services:            []ServiceData{buildServiceData(f, svc, cfg)},

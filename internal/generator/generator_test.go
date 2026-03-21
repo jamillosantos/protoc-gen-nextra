@@ -18,7 +18,7 @@ import (
 // appear somewhere in the generated content. This avoids brittle exact-match
 // comparisons while still asserting that the key structural elements are present.
 var fileChecks = map[string][]string{
-	"rpc/greeter/v1.gen.mdx": {
+	"rpc/greeter/v1.mdx": {
 		// Services
 		"## Greeter",
 		"## Farewell",
@@ -41,7 +41,7 @@ var fileChecks = map[string][]string{
 		// Error JSON payload
 		`"field_violations"`,
 	},
-	"rpc/greeter/v2.gen.mdx": {
+	"rpc/greeter/v2.mdx": {
 		"SayHello",
 		"SayHelloStream",
 		"SayHelloMany",
@@ -51,7 +51,7 @@ var fileChecks = map[string][]string{
 		"HelloRequest",
 		"HelloReply",
 	},
-	"rpc/notifier/v1.gen.mdx": {
+	"rpc/notifier/v1.mdx": {
 		// Methods and all four RPC types
 		"Send",
 		"Subscribe",
@@ -68,7 +68,7 @@ var fileChecks = map[string][]string{
 		// Local detail type link (TypePreview)
 		"shared.notifications.v1.ValidationFailure",
 	},
-	"shared/notifications/v1.gen.mdx": {
+	"shared/notifications/v1.mdx": {
 		"ValidationFailure",
 		"DeliveryStatus",
 		"Recipient",
