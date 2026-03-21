@@ -1,6 +1,12 @@
-.PHONY: build install testdata generate test update-golden lint
+.PHONY: build install testdata generate test update-golden lint clean
 
 BINARY := protoc-gen-nextra
+
+PROTO_FILES := \
+	testdata/proto/greeter/v1/greeter.proto \
+	testdata/proto/greeter/v2/greeter.proto \
+	testdata/proto/common/v1/common.proto \
+	testdata/proto/notifier/v1/notifier.proto
 
 build:
 	go build -o bin/$(BINARY) ./cmd/$(BINARY)
@@ -8,32 +14,36 @@ build:
 install:
 	go install ./cmd/$(BINARY)
 
-# Compile the test proto into a FileDescriptorSet used by the Go tests.
+# Compile all test protos into a single FileDescriptorSet used by the Go tests.
 # Requires: protoc (e.g. brew install protobuf)
-testdata/greeter.pb: testdata/proto/greeter.proto
+testdata/all.pb: $(PROTO_FILES)
 	protoc \
-		--descriptor_set_out=testdata/greeter.pb \
+		--descriptor_set_out=testdata/all.pb \
 		--include_source_info \
+		--include_imports \
 		-I testdata/proto \
-		testdata/proto/greeter.proto
+		$(PROTO_FILES)
 
-testdata: testdata/greeter.pb
+testdata: testdata/all.pb
 
-# Run the plugin against the test proto and write MDX pages to testdata/content/.
-generate: build testdata/greeter.pb
+# Run the plugin against the test protos and write MDX pages to testdata/content/.
+generate: build testdata/all.pb
 	mkdir -p testdata/content
 	protoc \
 		--plugin=protoc-gen-nextra=bin/$(BINARY) \
 		--nextra_out=testdata/content \
 		-I testdata/proto \
-		testdata/proto/greeter.proto
+		$(PROTO_FILES)
 
 test: generate
 	go test ./...
 
 # Re-generate golden files from current output.
-update-golden: testdata/greeter.pb
+update-golden: testdata/all.pb
 	UPDATE_GOLDEN=1 go test ./...
 
 lint:
 	golangci-lint run ./...
+
+clean:
+	rm -rf bin/ testdata/all.pb

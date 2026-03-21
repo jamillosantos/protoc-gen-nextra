@@ -1,0 +1,131 @@
+import { Tabs } from 'nextra/components'
+
+# NotificationService
+
+NotificationService manages sending and receiving notifications.
+
+**Package:** `notifier.v1`
+
+---
+
+<div style={{borderLeft: '3px solid #0070f3', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### <span style={{backgroundColor: '#0070f3', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>UNARY</span> Send
+
+Send delivers a notification to a recipient.
+
+<Tabs items={['Request: SendRequest', 'Response: SendResponse']}>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `recipient` | `Recipient` |  | recipient is who the notification should be delivered to. |
+| `subject` | `string` |  | subject is the short title of the notification. |
+| `body` | `string` |  | body is the full notification content. |
+| `scheduled_at` | `Timestamp` | <span style={{fontSize:'0.7rem',background:'#9ca3af',color:'white',padding:'1px 6px',borderRadius:'3px'}}>optional</span> | scheduled_at optionally schedules delivery for a future time. |
+
+</Tabs.Tab>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `notification_id` | `string` |  | notification_id is the unique identifier assigned to the notification. |
+| `status` | `DeliveryStatus` |  | status is the initial delivery status. |
+| `queued_at` | `Timestamp` |  | queued_at is the time the notification was accepted. |
+
+</Tabs.Tab>
+</Tabs>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #7928ca', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### <span style={{backgroundColor: '#7928ca', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>SERVER STREAM</span> Subscribe
+
+Subscribe opens a live stream of incoming notifications for a user.
+
+<Tabs items={['Request: SubscribeRequest', 'Response: Notification']}>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `user_id` | `string` |  | user_id identifies the user whose notifications to stream. |
+
+</Tabs.Tab>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `notification_id` | `string` |  | notification_id is the unique identifier of the notification. |
+| `subject` | `string` |  | subject is the short title of the notification. |
+| `body` | `string` |  | body is the full notification content. |
+| `status` | `DeliveryStatus` |  | status is the current delivery status. |
+| `sent_at` | `Timestamp` |  | sent_at is when the notification was originally sent. |
+
+</Tabs.Tab>
+</Tabs>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #f5a623', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### <span style={{backgroundColor: '#f5a623', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>CLIENT STREAM</span> Acknowledge
+
+Acknowledge bulk-acknowledges a stream of notification IDs.
+
+<Tabs items={['Request: AcknowledgeRequest', 'Response: AcknowledgeResponse']}>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `notification_id` | `string` |  | notification_id is the ID of the notification to acknowledge. |
+
+</Tabs.Tab>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `acknowledged_count` | `int32` |  | acknowledged_count is how many notifications were successfully acknowledged. |
+| `failed_ids` | `string` | <span style={{fontSize:'0.7rem',background:'#6b7280',color:'white',padding:'1px 6px',borderRadius:'3px'}}>repeated</span> | failed_ids contains IDs that could not be acknowledged. |
+
+</Tabs.Tab>
+</Tabs>
+
+</div>
+
+---
+
+<div style={{borderLeft: '3px solid #e00', paddingLeft: '1.5rem', marginTop: '2rem', marginBottom: '2rem'}}>
+
+### <span style={{backgroundColor: '#e00', color: 'white', padding: '2px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', verticalAlign: 'middle', marginRight: '0.5rem'}}>BIDI STREAM</span> Chat
+
+Chat opens a bidirectional stream for real-time messaging.
+
+<Tabs items={['Request: ChatMessage', 'Response: ChatMessage']}>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `sender_id` | `string` |  | sender_id is the user ID of the message author. |
+| `text` | `string` |  | text is the content of the message. |
+| `sent_at` | `Timestamp` |  | sent_at is when the message was sent. |
+
+</Tabs.Tab>
+  <Tabs.Tab>
+
+| Field | Type | | Description |
+|-------|------|:---:|-------------|
+| `sender_id` | `string` |  | sender_id is the user ID of the message author. |
+| `text` | `string` |  | text is the content of the message. |
+| `sent_at` | `Timestamp` |  | sent_at is when the message was sent. |
+
+</Tabs.Tab>
+</Tabs>
+
+</div>
+
+

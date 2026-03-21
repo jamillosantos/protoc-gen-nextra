@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package helloworld;
+package greeter.v2;
 
-option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/helloworld";
+option go_package = "github.com/jamillosantos/protoc-gen-nextra/testdata/greeter/v2";
 
 // GreeterService provides greeting functionality.
 service Greeter {
@@ -11,6 +11,9 @@ service Greeter {
 
   // SayHelloStream streams greetings back to the client.
   rpc SayHelloStream (HelloRequest) returns (stream HelloReply);
+
+  // SayHelloMany collects a stream of requests and returns a single combined greeting.
+  rpc SayHelloMany (stream HelloRequest) returns (HelloReply);
 }
 
 // HelloRequest is the request message for the Greeter service.
@@ -20,10 +23,16 @@ message HelloRequest {
 
   // language optionally selects the greeting language.
   optional string language = 2;
+
+  // repeat_count optionally repeats the greeting the given number of times.
+  optional int32 repeat_count = 3;
 }
 
 // HelloReply is the response message for the Greeter service.
 message HelloReply {
   // message is the greeting message.
   string message = 1;
+
+  // language_used is the language in which the greeting was generated.
+  string language_used = 2;
 }
