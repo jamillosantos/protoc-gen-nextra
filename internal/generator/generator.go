@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 //go:generate go run github.com/jamillosantos/protoc-gen-nextra/internal/embedgen
@@ -22,12 +23,13 @@ func init() {
 // GenerateFile generates Nextra MDX documentation for a single .proto file.
 // When cfg.SplitServices is true, each service gets its own page under <proto_dir>/<service>.mdx.
 // Otherwise all services are combined into a single <proto_dir>.mdx page.
+// Files with no services, messages, or enums are skipped.
 func GenerateFile(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
-	if len(f.Services) == 0 {
+	if len(f.Services) == 0 && len(f.Messages) == 0 && len(f.Enums) == 0 {
 		return nil
 	}
 
-	if cfg.SplitServices {
+	if cfg.SplitServices && len(f.Services) > 0 {
 		return generateSplit(gen, f)
 	}
 	return generateCombined(gen, f)
@@ -65,10 +67,32 @@ func renderPage(gen *protogen.Plugin, f *protogen.File, outPath string, data Pac
 
 // PackageData holds all template data for a package page.
 type PackageData struct {
-	Title                string
-	PackageName          string
-	ShowServiceHeadings  bool
-	Services             []ServiceData
+	Title               string
+	PackageName         string
+	ShowServiceHeadings bool
+	Services            []ServiceData
+	Messages            []MessageData
+	Enums               []EnumData
+}
+
+// MessageData holds template data for a top-level message type.
+type MessageData struct {
+	Name        string
+	Description string
+	Fields      []FieldData
+}
+
+// EnumData holds template data for a top-level enum type.
+type EnumData struct {
+	Name        string
+	Description string
+	Values      []EnumValueData
+}
+
+// EnumValueData holds template data for a single enum value.
+type EnumValueData struct {
+	Name        string
+	Description string
 }
 
 // ServiceData holds all template data for a single service.
@@ -122,6 +146,7 @@ func (m MethodData) BadgeColor() string {
 type FieldData struct {
 	Name        string
 	Type        string
+	Link        string // non-empty when Type is defined in a different package
 	Description string
 	Optional    bool
 	Repeated    bool
@@ -133,8 +158,36 @@ func buildPackageData(f *protogen.File, outPath string) PackageData {
 		PackageName:         string(f.Desc.Package()),
 		ShowServiceHeadings: len(f.Services) > 1,
 	}
+	inlined := make(map[string]bool)
 	for _, svc := range f.Services {
 		data.Services = append(data.Services, buildServiceData(svc))
+		for _, m := range svc.Methods {
+			inlined[string(m.Input.Desc.Name())] = true
+			inlined[string(m.Output.Desc.Name())] = true
+		}
+	}
+	for _, msg := range f.Messages {
+		if inlined[string(msg.Desc.Name())] {
+			continue
+		}
+		data.Messages = append(data.Messages, MessageData{
+			Name:        string(msg.Desc.Name()),
+			Description: commentString(msg.Comments),
+			Fields:      buildFields(msg),
+		})
+	}
+	for _, enum := range f.Enums {
+		ed := EnumData{
+			Name:        string(enum.Desc.Name()),
+			Description: commentString(enum.Comments),
+		}
+		for _, v := range enum.Values {
+			ed.Values = append(ed.Values, EnumValueData{
+				Name:        string(v.Desc.Name()),
+				Description: commentString(v.Comments),
+			})
+		}
+		data.Enums = append(data.Enums, ed)
 	}
 	return data
 }
@@ -169,15 +222,31 @@ func buildServiceData(svc *protogen.Service) ServiceData {
 }
 
 func buildFields(msg *protogen.Message) []FieldData {
+	currentPkg := msg.Desc.ParentFile().Package()
 	var fields []FieldData
 	for _, f := range msg.Fields {
-		fields = append(fields, FieldData{
+		fd := FieldData{
 			Name:        string(f.Desc.Name()),
 			Type:        fieldTypeName(f),
 			Description: commentString(f.Comments),
 			Repeated:    f.Desc.IsList(),
 			Optional:    f.Desc.HasOptionalKeyword(),
-		})
+		}
+		switch f.Desc.Kind() {
+		case protoreflect.MessageKind, protoreflect.GroupKind:
+			typePkg := f.Message.Desc.ParentFile().Package()
+			if typePkg != currentPkg {
+				fd.Type = string(typePkg) + "." + string(f.Message.Desc.Name())
+				fd.Link = "/" + filepath.Dir(string(f.Message.Desc.ParentFile().Path())) + "#" + strings.ToLower(string(f.Message.Desc.Name()))
+			}
+		case protoreflect.EnumKind:
+			typePkg := f.Enum.Desc.ParentFile().Package()
+			if typePkg != currentPkg {
+				fd.Type = string(typePkg) + "." + string(f.Enum.Desc.Name())
+				fd.Link = "/" + filepath.Dir(string(f.Enum.Desc.ParentFile().Path())) + "#" + strings.ToLower(string(f.Enum.Desc.Name()))
+			}
+		}
+		fields = append(fields, fd)
 	}
 	return fields
 }
