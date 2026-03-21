@@ -2,6 +2,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build && pagefind --site .next/server/app",
+    "build:export": "NEXT_OUTPUT=export next build && pagefind --site out",
     "start": "next start"
   },
   "dependencies": {
