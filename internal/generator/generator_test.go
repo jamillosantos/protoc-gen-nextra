@@ -87,12 +87,10 @@ func TestGenerateFile(t *testing.T) {
 		t.Fatalf("create plugin: %v", err)
 	}
 
-	for _, f := range plugin.Files {
-		if !f.Generate {
-			continue
-		}
-		if err := generator.GenerateFile(plugin, f, generator.Config{TypePreviews: true}); err != nil {
-			t.Fatalf("generate %s: %v", f.Desc.Path(), err)
+	order, byDir := generator.GroupByDir(plugin.Files)
+	for _, dir := range order {
+		if err := generator.GeneratePackage(plugin, byDir[dir], generator.Config{TypePreviews: true}); err != nil {
+			t.Fatalf("generate %s: %v", dir, err)
 		}
 	}
 

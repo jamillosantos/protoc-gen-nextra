@@ -28,17 +28,63 @@ func init() {
 // When cfg.SplitServices is true, each service gets its own page under <proto_dir>/<service>.mdx.
 // Otherwise all services are combined into a single <proto_dir>.mdx page.
 // Files with no services, messages, or enums are skipped.
+//
+// When multiple .proto files share a directory (and therefore the same combined
+// output path), prefer GeneratePackage so the page aggregates content from
+// every file in the package instead of one file overwriting the next.
 func GenerateFile(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
-	if len(f.Services) == 0 && len(f.Messages) == 0 && len(f.Enums) == 0 {
+	return GeneratePackage(gen, []*protogen.File{f}, cfg)
+}
+
+// GeneratePackage generates one MDX page per package by aggregating every
+// .proto file that lives in the same directory. Use this instead of calling
+// GenerateFile in a loop: it deduplicates the output path so a package split
+// across multiple files emits a single combined page.
+func GeneratePackage(gen *protogen.Plugin, files []*protogen.File, cfg Config) error {
+	var primary *protogen.File
+	for _, f := range files {
+		if len(f.Services) > 0 || len(f.Messages) > 0 || len(f.Enums) > 0 {
+			primary = f
+			break
+		}
+	}
+	if primary == nil {
 		return nil
 	}
 
 	cfg.typeIndex, cfg.typeMessageIndex = buildTypeIndex(gen.Files)
 
-	if cfg.SplitServices && len(f.Services) > 0 {
-		return generateSplit(gen, f, cfg)
+	if cfg.SplitServices {
+		for _, f := range files {
+			if len(f.Services) == 0 {
+				continue
+			}
+			if err := generateSplit(gen, f, cfg); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
-	return generateCombined(gen, f, cfg)
+	return generateCombinedForFiles(gen, primary, files, cfg)
+}
+
+// GroupByDir groups protogen files by the directory their .proto path lives
+// in. Files with Generate=false are skipped. The returned slice preserves the
+// directory order of first appearance so output remains stable.
+func GroupByDir(files []*protogen.File) ([]string, map[string][]*protogen.File) {
+	byDir := make(map[string][]*protogen.File)
+	var order []string
+	for _, f := range files {
+		if !f.Generate {
+			continue
+		}
+		dir := filepath.Dir(f.Desc.Path())
+		if _, ok := byDir[dir]; !ok {
+			order = append(order, dir)
+		}
+		byDir[dir] = append(byDir[dir], f)
+	}
+	return order, byDir
 }
 
 // buildTypeIndex builds a map from fully-qualified proto message name to MDX
@@ -60,11 +106,12 @@ func buildTypeIndex(files []*protogen.File) (map[string]string, map[string]*prot
 	return links, msgs
 }
 
-// generateCombined writes one MDX file containing all services in the proto file.
-func generateCombined(gen *protogen.Plugin, f *protogen.File, cfg Config) error {
-	// Output path: <proto_directory>.mdx (e.g. greeter/v1/greeter.proto → greeter/v1.mdx)
-	outPath := filepath.Dir(f.Desc.Path()) + ".mdx"
-	return renderPage(gen, f, outPath, buildPackageData(f, outPath, cfg))
+// generateCombinedForFiles writes one MDX file containing every service,
+// message, and enum across the supplied files. The primary file is used as
+// the carrier for output path and import resolution.
+func generateCombinedForFiles(gen *protogen.Plugin, primary *protogen.File, files []*protogen.File, cfg Config) error {
+	outPath := filepath.Dir(primary.Desc.Path()) + ".mdx"
+	return renderPage(gen, primary, outPath, buildPackageDataFromFiles(files, outPath, cfg))
 }
 
 // generateSplit writes one MDX file per service inside <proto_directory>/<service>.mdx.
@@ -220,42 +267,54 @@ type PreviewItem struct {
 	Repeated bool   `json:"repeated,omitempty"`
 }
 
-func buildPackageData(f *protogen.File, outPath string, cfg Config) PackageData {
+func buildPackageDataFromFiles(files []*protogen.File, outPath string, cfg Config) PackageData {
+	var pkgName protoreflect.FullName
+	totalServices := 0
+	for _, f := range files {
+		if pkgName == "" {
+			pkgName = f.Desc.Package()
+		}
+		totalServices += len(f.Services)
+	}
 	data := PackageData{
 		Title:               filepath.Base(strings.TrimSuffix(outPath, ".mdx")),
-		PackageName:         string(f.Desc.Package()),
-		ShowServiceHeadings: len(f.Services) > 1,
+		PackageName:         string(pkgName),
+		ShowServiceHeadings: totalServices > 1,
 	}
 	inlined := make(map[string]bool)
-	for _, svc := range f.Services {
-		data.Services = append(data.Services, buildServiceData(f, svc, cfg))
-		for _, m := range svc.Methods {
-			inlined[string(m.Input.Desc.Name())] = true
-			inlined[string(m.Output.Desc.Name())] = true
+	for _, f := range files {
+		for _, svc := range f.Services {
+			data.Services = append(data.Services, buildServiceData(f, svc, cfg))
+			for _, m := range svc.Methods {
+				inlined[string(m.Input.Desc.Name())] = true
+				inlined[string(m.Output.Desc.Name())] = true
+			}
 		}
 	}
-	for _, msg := range f.Messages {
-		if inlined[string(msg.Desc.Name())] {
-			continue
-		}
-		data.Messages = append(data.Messages, MessageData{
-			Name:        string(msg.Desc.Name()),
-			Description: commentString(msg.Comments),
-			Fields:      buildFields(msg, cfg),
-		})
-	}
-	for _, enum := range f.Enums {
-		ed := EnumData{
-			Name:        string(enum.Desc.Name()),
-			Description: commentString(enum.Comments),
-		}
-		for _, v := range enum.Values {
-			ed.Values = append(ed.Values, EnumValueData{
-				Name:        string(v.Desc.Name()),
-				Description: commentString(v.Comments),
+	for _, f := range files {
+		for _, msg := range f.Messages {
+			if inlined[string(msg.Desc.Name())] {
+				continue
+			}
+			data.Messages = append(data.Messages, MessageData{
+				Name:        string(msg.Desc.Name()),
+				Description: commentString(msg.Comments),
+				Fields:      buildFields(msg, cfg),
 			})
 		}
-		data.Enums = append(data.Enums, ed)
+		for _, enum := range f.Enums {
+			ed := EnumData{
+				Name:        string(enum.Desc.Name()),
+				Description: commentString(enum.Comments),
+			}
+			for _, v := range enum.Values {
+				ed.Values = append(ed.Values, EnumValueData{
+					Name:        string(v.Desc.Name()),
+					Description: commentString(v.Comments),
+				})
+			}
+			data.Enums = append(data.Enums, ed)
+		}
 	}
 	return data
 }
