@@ -22,11 +22,9 @@ func main() {
 			SplitServices: *splitServices,
 			TypePreviews:  !*disableTypePreviews,
 		}
-		for _, f := range gen.Files {
-			if !f.Generate {
-				continue
-			}
-			if err := generator.GenerateFile(gen, f, cfg); err != nil {
+		order, byDir := generator.GroupByDir(gen.Files)
+		for _, dir := range order {
+			if err := generator.GeneratePackage(gen, byDir[dir], cfg); err != nil {
 				return err
 			}
 		}
